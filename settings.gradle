@@ -1,4 +1,4 @@
-include "immutables"
+include "domain"
 include "web"
 
 rootProject.name = 'firetruck'
