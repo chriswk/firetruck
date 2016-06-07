@@ -38,7 +38,7 @@ public class IncidentService {
         return incidentRepository.findAll();
     }
 
-    public no.finntech.firetruck.domain.Incident save(SensuIncident sensuIncident) {
+    public Incident save(SensuIncident sensuIncident) {
         Incident domainInc = new Incident();
         List<IncidentTag> tags = sensuIncident.lastResult().tags().stream().map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> {
             IncidentTag temp = new IncidentTag();
@@ -68,6 +68,15 @@ public class IncidentService {
         domainInc.setFinn_env(sensuIncident.lastResult().finnEnv());
         domainInc.setOutput(sensuIncident.lastResult().output());
         return incidentRepository.save(domainInc);
+    }
+
+    public void save(SensuIncident... incidents) {
+        for(SensuIncident i : incidents) {
+            save(i);
+        }
+    }
+    public void save(List<SensuIncident> incidents) {
+        incidents.forEach(this::save);
     }
 
     public Incident findById(long id) {

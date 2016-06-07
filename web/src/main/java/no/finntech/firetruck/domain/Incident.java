@@ -8,9 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
+
 @Entity
 public class Incident {
     @Id
@@ -20,12 +21,15 @@ public class Incident {
     private String client;
     private String dc;
     private ZonedDateTime last_execution;
-    @Lob
+
+    @Size(max = 10000)
     private String command;
     private Double duration;
     private ZonedDateTime executed;
     private String finn_app;
     private String finn_env;
+
+    @Size(max = 10000)
     private String output;
 
 

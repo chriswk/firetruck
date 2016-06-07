@@ -111,7 +111,6 @@ public class IncidentServiceTest {
         incidentService.save(testSensuIncident);
         ImmutableSensuIncident testIncident2 = ImmutableSensuIncident.copyOf(testSensuIncident).withLastResult(extraResult);
         incidentService.save(testIncident2);
-        incidentService.save(testIncident2);
         Optional<IncidentTag> databaseTag = tagRepository.findByName("database");
         assertThat(databaseTag).isPresent();
         assertThat(databaseTag).hasValueSatisfying((i) -> assertThat(i.getIncidents()).hasSize(1));

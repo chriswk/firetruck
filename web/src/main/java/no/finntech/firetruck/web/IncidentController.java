@@ -30,6 +30,12 @@ public class IncidentController {
         return new ResponseEntity<>(incidentService.save(sensuIncident), HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/incidents/bulkimport", method = RequestMethod.POST)
+    public ResponseEntity<?> bulkImport(@RequestBody SensuIncident[] sensuIncidents) {
+        incidentService.save(sensuIncidents);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
     @RequestMapping("/incidents")
     public String list(ModelMap modelMap, Pageable page) {
         modelMap.put("incidents", incidentService.findAll(page));
