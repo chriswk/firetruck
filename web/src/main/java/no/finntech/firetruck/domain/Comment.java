@@ -18,7 +18,7 @@ public class Comment {
     private String information;
 
     @OneToMany
-    private List<Tag> tags;
+    private List<IncidentTag> tags;
 
     @ManyToOne
     private Incident incident;
@@ -26,7 +26,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String information, List<Tag> tags, Incident incident) {
+    public Comment(String information, List<IncidentTag> tags, Incident incident) {
         this.information = information;
         this.tags = tags;
         this.incident = incident;
@@ -48,11 +48,11 @@ public class Comment {
         this.information = information;
     }
 
-    public List<Tag> getTags() {
+    public List<IncidentTag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<IncidentTag> tags) {
         this.tags = tags;
     }
 

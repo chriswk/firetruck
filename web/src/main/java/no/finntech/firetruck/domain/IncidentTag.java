@@ -11,7 +11,7 @@ import javax.persistence.ManyToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Team {
+public class IncidentTag {
     @Id
     @GeneratedValue
     private Long id;
@@ -21,13 +21,9 @@ public class Team {
 
     @ManyToMany
     @JsonIgnore
-    public List<Incident> incidents;
+    private List<Incident> incidents;
 
-    public Team() {
-    }
-
-    public Team(String name) {
-        this.name = name;
+    public IncidentTag() {
     }
 
     public Long getId() {
@@ -55,9 +51,10 @@ public class Team {
     }
 
     public void addIncident(Incident incident) {
-        if(getIncidents() == null) {
+        if (getIncidents() == null) {
             setIncidents(new ArrayList<>());
         }
         getIncidents().add(incident);
     }
 }
+

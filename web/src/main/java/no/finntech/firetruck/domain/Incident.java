@@ -1,12 +1,15 @@
 package no.finntech.firetruck.domain;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 @Entity
 public class Incident {
@@ -25,11 +28,12 @@ public class Incident {
     private String finn_env;
     private String output;
 
-    @OneToMany
-    private List<Team> teams;
 
-    @OneToMany
-    private List<Tag> tags;
+    @ManyToMany(mappedBy = "incidents")
+    private Set<Team> teams;
+
+    @OneToMany(mappedBy = "incidents")
+    private Set<IncidentTag> tags;
 
     @OneToMany(mappedBy = "incident")
     private List<Comment> comments;
@@ -126,19 +130,19 @@ public class Incident {
         this.output = output;
     }
 
-    public List<Team> getTeams() {
+    public Set<Team> getTeams() {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
+    public void setTeams(Set<Team> teams) {
         this.teams = teams;
     }
 
-    public List<Tag> getTags() {
+    public Set<IncidentTag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<IncidentTag> tags) {
         this.tags = tags;
     }
 
@@ -149,4 +153,21 @@ public class Incident {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+    public void addTeam(Team team) {
+        if (this.getTeams() == null) {
+            this.setTeams(new HashSet<>());
+        }
+        this.getTeams().add(team);
+        team.addIncident(this);
+    }
+
+    public void addTag(IncidentTag tag) {
+        if (this.getTags() == null) {
+            this.setTags(new HashSet<>());
+        }
+        this.getTags().add(tag);
+        tag.addIncident(this);
+    }
 }
+
