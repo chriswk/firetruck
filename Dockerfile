@@ -8,4 +8,4 @@ ADD run-env.sh run-env.sh
 
 ENV THRIFT_GREENPAGES_HOST "greenpages-server"
 
-EXPOSE 8148
+EXPOSE 8733
