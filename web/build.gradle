@@ -20,7 +20,7 @@ plugins {
 }
 
 apply plugin: 'spring-boot'
-apply from: "${rootDir}/gradle/publishing.gradle"
+apply from: "$rootDir/gradle/publishing.gradle"
 
 repositories {
     jcenter()
@@ -34,6 +34,9 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-rest"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.data:spring-data-rest-hal-browser"
+    compile "no.finntech:commons-db:16.4"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.6.4"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.4"
     compile "org.postgresql:postgresql:9.4.1208"

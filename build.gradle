@@ -1,6 +1,9 @@
 subprojects {
     repositories {
         jcenter()
+        maven {
+            url = "http://mavenproxy.finntech.no/finntech-release"
+        }
     }
     group = 'no.finntech.firetruck'
     version = '1.0-SNAPSHOT'

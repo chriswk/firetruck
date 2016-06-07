@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Encoding" content="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" th:href="@{//finncdn.no/bb/latest/css/spaden/4.x/spaden.min.css}" href="//finncdn.no/bb/latest/css/spaden/4.x/spaden.min.css">
+  </head>
+  <body>
+    <div class="topmenu fixed">
+      <div class="container">
+        <div class="page">
+          <nav class="navbar flex align-items-center align-items-stretch mod-behaviour mbn linkblock">
+            <a th:href="@{/}" class="nav-logo flex align-items-center margin-right-auto">Home</a>
+            <a th:href="@{/incidents}" class="nav-element flex align-items-center centerify openlevel2">Incidents</a>
+            <a th:href="@{/tags}" class="nav-element flex align-items-center centerify openlevel2">Tags</a>
+            <a th:href="@{/teams}" class="nav-element flex align-items-center centerify openlevel2">Teams</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -17,11 +17,7 @@ springBoot {
 
 publishing {
     publications {
-        firetruck(MavenPublication) {
-            artifactId "$project.name"
-            version "${project.version}"
-            from components.java
-
+        nebula(MavenPublication) {
             artifact ("$buildDir/libs/${project.name}-$version-shaded.jar") {
                 classifier="shaded"
             }
