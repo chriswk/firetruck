@@ -12,7 +12,7 @@ import no.finntech.firetruck.parsing.ImmutableSensuIncident;
 import no.finntech.firetruck.parsing.LastResult;
 import no.finntech.firetruck.parsing.SensuIncident;
 import no.finntech.firetruck.repository.IncidentRepository;
-import no.finntech.firetruck.repository.TagRepository;
+import no.finntech.firetruck.repository.IncidentTagRepository;
 import no.finntech.firetruck.repository.TeamRepository;
 
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class IncidentServiceTest {
     TeamRepository teamRepository;
 
     @Autowired
-    TagRepository tagRepository;
+    IncidentTagRepository incidentTagRepository;
 
     @Autowired
     IncidentRepository incidentRepository;
@@ -91,7 +91,7 @@ public class IncidentServiceTest {
         incidentService.save(testSensuIncident);
         incidentService.save(testSensuIncident);
 
-        assertThat(tagRepository.findAll()).hasSize(2);
+        assertThat(incidentTagRepository.findAll()).hasSize(2);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class IncidentServiceTest {
         incidentService.save(testSensuIncident);
         ImmutableSensuIncident testIncident2 = ImmutableSensuIncident.copyOf(testSensuIncident).withLastResult(extraResult);
         incidentService.save(testIncident2);
-        Optional<IncidentTag> databaseTag = tagRepository.findByName("database");
+        Optional<IncidentTag> databaseTag = incidentTagRepository.findByName("database");
         assertThat(databaseTag).isPresent();
         assertThat(databaseTag).hasValueSatisfying((i) -> assertThat(i.getIncidents()).hasSize(1));
     }

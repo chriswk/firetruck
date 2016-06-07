@@ -7,7 +7,7 @@ import no.finntech.firetruck.domain.IncidentTag;
 import no.finntech.firetruck.domain.Team;
 import no.finntech.firetruck.parsing.SensuIncident;
 import no.finntech.firetruck.repository.IncidentRepository;
-import no.finntech.firetruck.repository.TagRepository;
+import no.finntech.firetruck.repository.IncidentTagRepository;
 import no.finntech.firetruck.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class IncidentService {
     IncidentRepository incidentRepository;
-    TagRepository tagRepository;
+    IncidentTagRepository incidentTagRepository;
     TeamRepository teamRepository;
 
     @Autowired
-    public IncidentService(IncidentRepository incidentRepository, TagRepository tagRepository, TeamRepository teamRepository) {
+    public IncidentService(IncidentRepository incidentRepository, IncidentTagRepository incidentTagRepository, TeamRepository teamRepository) {
         this.incidentRepository = incidentRepository;
-        this.tagRepository = tagRepository;
+        this.incidentTagRepository = incidentTagRepository;
         this.teamRepository = teamRepository;
     }
 
@@ -40,12 +40,12 @@ public class IncidentService {
 
     public Incident save(SensuIncident sensuIncident) {
         Incident domainInc = new Incident();
-        List<IncidentTag> tags = sensuIncident.lastResult().tags().stream().map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> {
+        List<IncidentTag> tags = sensuIncident.lastResult().tags().stream().map(tagName -> incidentTagRepository.findByName(tagName).orElseGet(() -> {
             IncidentTag temp = new IncidentTag();
             temp.setName(tagName);
             return temp;
         })).collect(toList());
-        tagRepository.save(tags);
+        incidentTagRepository.save(tags);
         List<Team> teams = sensuIncident.lastResult().teams().stream().map(teamName ->
                 teamRepository.findByName(teamName).orElseGet(() -> {
                     Team team = new Team();
