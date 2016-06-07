@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+ext {
+    generatedSourcesDir = file("${buildDir}/generated-sources/main/java")
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        java {
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+compileJava.dependsOn(clean)
+
+compileJava {
+    doFirst {
+        generatedSourcesDir.mkdirs()
+    }
+    options.compilerArgs += ['-s', generatedSourcesDir]
+}
+dependencies {
+    compileOnly "org.immutables:value:2.2.2"
+    compile "com.fasterxml.jackson.core:jackson-core:2.6.4"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.6.4"
+}
