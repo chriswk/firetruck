@@ -1,0 +1,25 @@
+{
+  "links": {
+    "build": "https://bamboo.finn.no/browse/FIRETRUCK",
+    "repository": "https://git.finn.no/projects/TOOL/repos/firetruck/browse"
+  },
+  "versions": {
+    "jdk": "1.8",
+    "mvn": "3"
+  },
+  "env": {},
+  "tasks": {
+    "default": [
+      {
+        "command": "./gradlew publish",
+        "pipelines": [
+          {
+            "pattern": "Upload (http.*firetruck-web-\\d.+?shaded\\.jar)",
+            "name": "firetruck-web"
+          }
+        ],
+        "test-pattern": "**/build/**/TEST-*.xml"
+      }
+    ]
+  }
+}

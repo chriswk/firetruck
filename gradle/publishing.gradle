@@ -1,0 +1,35 @@
+publish {
+    dependsOn assemble
+}
+
+publishToMavenLocal {
+    dependsOn assemble
+}
+
+bootRepackage {
+    classifier = "shaded"
+    withJarTask = "jar"
+}
+
+springBoot {
+    backupSource = false
+}
+
+publishing {
+    publications {
+        firetruck(MavenPublication) {
+            artifactId "$project.name"
+            version "${project.version}"
+            from components.java
+
+            artifact ("$buildDir/libs/${project.name}-$version-shaded.jar") {
+                classifier="shaded"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = "http://mavenproxy.finntech.no/finntech-internal-snapshot"
+        }
+    }
+}

@@ -2,6 +2,8 @@ subprojects {
     repositories {
         jcenter()
     }
+    group = 'no.finntech.firetruck'
+    version = '1.0-SNAPSHOT'
 }
 
 

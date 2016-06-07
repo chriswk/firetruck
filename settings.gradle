@@ -2,3 +2,7 @@ include "domain"
 include "web"
 
 rootProject.name = 'firetruck'
+
+rootProject.children.each {
+    it.name = "${rootProject.name}-${it.name}"
+}

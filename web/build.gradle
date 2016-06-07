@@ -10,9 +10,17 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
+plugins {
+    id 'java'
+    id 'idea'
+    id 'nebula.project' version '3.1.0'
+    id 'nebula.info' version '3.1.0'
+    id 'maven'
+    id 'maven-publish'
+}
+
 apply plugin: 'spring-boot'
-apply plugin: 'idea'
+apply from: "${rootDir}/gradle/publishing.gradle"
 
 repositories {
     jcenter()
@@ -22,7 +30,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile project(":domain")
+    compile project(":firetruck-domain")
     compile "org.springframework.boot:spring-boot-starter-data-rest"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-actuator"
@@ -31,4 +39,8 @@ dependencies {
     compile "org.postgresql:postgresql:9.4.1208"
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.4.1"
+}
+
+bootRun {
+    systemProperties = System.properties
 }
