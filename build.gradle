@@ -8,7 +8,3 @@ subprojects {
     group = 'no.finntech.firetruck'
     version = '1.0-SNAPSHOT'
 }
-
-task stage {
-    dependsOn build
-}

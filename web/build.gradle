@@ -56,3 +56,8 @@ dependencies {
 bootRun {
     systemProperties = System.properties
 }
+
+task stage {
+    dependsOn build
+}
+
