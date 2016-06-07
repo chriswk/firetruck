@@ -11,11 +11,18 @@
   "tasks": {
     "deploy": [
       {
-        "command": "./gradlew publish",
+        "command": "./gradlew publish && docker build -t finntech/firetruck:$FINNBUILD_RANDOM_HASH . && docker push finntech/firetruck:$FINNBUILD_RANDOM_HASH && echo UPLOADED DOCKER IMAGE finntech/firetruck:$FINNBUILD_RANDOM_HASH && mvn deploy:deploy-file -Durl=http://mavenproxy.finntech.no/finntech-internal-snapshot/ -Dfile=fiaas.yml -DgroupId=no.finntech.firetruck -DartifactId=firetruck-fiaas -Dversion=$FINNBUILD_RANDOM_HASH-SNAPSHOT",
         "pipelines": [
           {
             "pattern": "Upload (http.*firetruck-web-\\d.+?shaded\\.jar)",
-            "name": "firetruck-web"
+            "name": "firetruck-web",
+            "related-artifacts": [{
+              "type": "docker",
+              "pattern": "UPLOADED DOCKER IMAGE (.+/.+:.+)"
+            }, {
+              "type": "fiaas",
+              "pattern": "Uploaded: (.*-fiaas-.*\.yml)"
+            }]
           }
         ],
         "test-pattern": "**/build/test-results/TEST-*.xml"
