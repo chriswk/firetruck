@@ -1,0 +1,4 @@
+*
+!web/build/libs/firetruck-web-1.0-SNAPSHOT-shaded.jar
+!run-env.sh
+

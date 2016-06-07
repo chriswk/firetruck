@@ -1,0 +1,18 @@
+{
+  "ownership": [
+    {
+      "area": "vakt",
+      "domain": "oncall",
+      "slack": "#finn-vakt"
+    }
+  ],
+  "artifacts": {
+    "artifact": [
+      {
+        "description": "Knowledge database of error situations",
+        "name": "firetruck",
+        "type": "frontend-web"
+      }
+    ]
+  }
+}

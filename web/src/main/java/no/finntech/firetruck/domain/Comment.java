@@ -12,16 +12,16 @@ import javax.validation.constraints.Size;
 public class Comment {
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
     @Size(max = 10000)
-    public String information;
+    private String information;
 
     @OneToMany
-    public List<Tag> tags;
+    private List<Tag> tags;
 
     @ManyToOne
-    public Incident incident;
+    private Incident incident;
 
     public Comment() {
     }
