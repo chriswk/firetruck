@@ -9,7 +9,7 @@
   },
   "env": {},
   "tasks": {
-    "default": [
+    "deploy": [
       {
         "command": "./gradlew publish",
         "pipelines": [
