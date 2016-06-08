@@ -2,13 +2,13 @@ package no.finntech.firetruck.service;
 
 import java.util.List;
 
-import no.finntech.firetruck.domain.Incident;
-import no.finntech.firetruck.domain.IncidentTag;
-import no.finntech.firetruck.domain.Team;
+import no.finntech.firetruck.jpa.domain.Incident;
+import no.finntech.firetruck.jpa.domain.IncidentTag;
+import no.finntech.firetruck.jpa.domain.Team;
 import no.finntech.firetruck.parsing.SensuIncident;
-import no.finntech.firetruck.repository.IncidentRepository;
-import no.finntech.firetruck.repository.IncidentTagRepository;
-import no.finntech.firetruck.repository.TeamRepository;
+import no.finntech.firetruck.jpa.repository.IncidentRepository;
+import no.finntech.firetruck.jpa.repository.IncidentTagRepository;
+import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,11 +30,11 @@ public class IncidentService {
         this.teamRepository = teamRepository;
     }
 
-    public Page<no.finntech.firetruck.domain.Incident> findAll(Pageable page) {
+    public Page<no.finntech.firetruck.jpa.domain.Incident> findAll(Pageable page) {
         return incidentRepository.findAll(page);
     }
 
-    public Iterable<no.finntech.firetruck.domain.Incident> findAll() {
+    public Iterable<no.finntech.firetruck.jpa.domain.Incident> findAll() {
         return incidentRepository.findAll();
     }
 
@@ -43,17 +43,15 @@ public class IncidentService {
         List<IncidentTag> tags = sensuIncident.lastResult().tags().stream().map(tagName -> incidentTagRepository.findByName(tagName).orElseGet(() -> {
             IncidentTag temp = new IncidentTag();
             temp.setName(tagName);
-            return temp;
+            return incidentTagRepository.save(temp);
         })).collect(toList());
-        incidentTagRepository.save(tags);
         List<Team> teams = sensuIncident.lastResult().teams().stream().map(teamName ->
                 teamRepository.findByName(teamName).orElseGet(() -> {
                     Team team = new Team();
                     team.setName(teamName);
-                    return team;
+                    return teamRepository.save(team);
                 })
         ).collect(toList());
-        teamRepository.save(teams);
 
         teams.forEach(domainInc::addTeam);
         tags.forEach(domainInc::addTag);
@@ -62,10 +60,10 @@ public class IncidentService {
         domainInc.setDc(sensuIncident.dc());
         domainInc.setDuration(sensuIncident.lastResult().duration());
         domainInc.setExecuted(sensuIncident.lastResult().executed());
-        domainInc.setLast_execution(sensuIncident.lastExecution());
+        domainInc.setLastExecution(sensuIncident.lastExecution());
         domainInc.setCommand(sensuIncident.lastResult().command());
-        domainInc.setFinn_app(sensuIncident.lastResult().finnApp());
-        domainInc.setFinn_env(sensuIncident.lastResult().finnEnv());
+        domainInc.setFinnApp(sensuIncident.lastResult().finnApp());
+        domainInc.setFinnEnv(sensuIncident.lastResult().finnEnv());
         domainInc.setOutput(sensuIncident.lastResult().output());
         return incidentRepository.save(domainInc);
     }

@@ -7,7 +7,7 @@ import java.util.Random;
 import javax.transaction.Transactional;
 
 import no.finntech.firetruck.TestConfig;
-import no.finntech.firetruck.domain.IncidentTag;
+import no.finntech.firetruck.jpa.domain.IncidentTag;
 import no.finntech.firetruck.parsing.ImmutableLastResult;
 import no.finntech.firetruck.parsing.ImmutableSensuIncident;
 import no.finntech.firetruck.parsing.LastResult;

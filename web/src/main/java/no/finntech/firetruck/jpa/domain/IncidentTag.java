@@ -1,19 +1,22 @@
-package no.finntech.firetruck.domain;
+package no.finntech.firetruck.jpa.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class IncidentTag {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO, generator="incidenttag_gen")
+    @SequenceGenerator(name = "incidenttag_gen", sequenceName = "INCIDENTTAG_SEQ")
     private Long id;
 
     @Column(unique = true)

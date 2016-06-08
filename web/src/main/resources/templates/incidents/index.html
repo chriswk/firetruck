@@ -4,31 +4,33 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <table>
+  <div th:replace="/incidents/pagination"></div>
+  <table class="outerborder zebra-striped hover-rows">
     <thead>
       <tr>
-        <th>Checkname</th>
-        <th>Last executed</th>
-        <th>Tags</th>
-        <th>Teams</th>
+        <th><a th:href="@{/incidents(sort=id)}">Id</a></th>
+        <th><a th:href="@{/incidents(sort=checkName)}">Checkname</a></th>
+        <th><a th:href="@{/incidents(sort=lastExecution)}">Last executed</a></th>
+        <th><a th:href="@{/incidents(sort=finnApp)}">Finn APP</a></th>
+        <th><a th:href="@{/incidents(sort=finnEnv)}">Finn ENV</a></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <tr th:each="inc,iterStatus : ${incidents}">
+      <tr th:each="inc : ${incidents}">
+        <td th:text="${inc.id}">Id</td>
         <td th:text="${inc.checkName}">Check</td>
-        <td th:text="${inc.last_execution}">2016-06-07</td>
-        <td><ul>
-            <li th:each="tag,tagStatus : ${inc.tags}">
-              <span th:text="${tag.name}">Name</span>
-            </li>
-          </ul>
-        </td>
-        <td>
-
+        <td th:text="${inc.lastExecution}">2016-06-07</td>
+        <td th:text="${inc.finnApp}">mobile</td>
+        <td th:text="${inc.finnEnv}">ci</td>
+        <td><a th:href="@{|/incidents/${inc.id}|}">
+          View
+        </a>
         </td>
       </tr>
     </tbody>
   </table>
+  <div th:replace="/incidents/pagination"></div>
 </div>
 </body>
 </html>

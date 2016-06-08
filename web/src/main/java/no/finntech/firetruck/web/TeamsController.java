@@ -1,7 +1,7 @@
 package no.finntech.firetruck.web;
 
-import no.finntech.firetruck.domain.Team;
-import no.finntech.firetruck.repository.TeamRepository;
+import no.finntech.firetruck.jpa.domain.Team;
+import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +22,7 @@ public class TeamsController {
     @RequestMapping("/teams")
     public String list(ModelMap modelMap, Pageable page) {
         modelMap.put("teams", teamRepository.findAll(page));
+        modelMap.put("pagination", page);
         return "teams/index";
     }
 

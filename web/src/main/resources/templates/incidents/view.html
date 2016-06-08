@@ -1,0 +1,65 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+  <title th:text="${incident.checkName}">Incident theme page</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <table class="outerborder zebra-striped hover-rows">
+    <thead>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Environment</td>
+        <td th:text="${incident.finnEnv}">CI</td>
+      </tr>
+      <tr>
+        <td>App</td>
+        <td th:text="${incident.finnApp}">mobile</td>
+      </tr>
+      <tr>
+        <td>Command run</td>
+        <td th:text="${incident.command}">ls -la</td>
+      </tr>
+      <tr th:if="${not #sets.isEmpty(incident.tags)}">
+        <td>Tags</td>
+        <td>
+        <div th:each="t : ${incident.tags}">
+          <a th:href="@{|/incidenttags/${t.id}|}" class="tagword" th:text="${t.name}">Placeholder</a>
+        </div>
+        </td>
+      </tr>
+      <tr th:if="${not #sets.isEmpty(incident.teams)}">
+        <td>Teams</td>
+        <td>
+          <div th:each="t : ${incident.teams}"><!--
+            --><a th:href="@{|/teams/${t.id}|}" th:text="${t.name}">Team</a>,<!--
+            --></div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <a th:if="${incident.id} &gt; 1" rel="prev"
+     th:with="pageNo = ${incident.id - 1}"
+     th:href="@{|/incidents/${pageNo}|}">
+    <span class="hidegt768 valign-middle mrs">Previous</span>
+    <svg height="1em" viewBox="0 0 10 16" class="valign-middle">
+      <switch>
+        <polyline points="8,2 2,8 8,14" fill="none" stroke="#07E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <text>&lt;</text>
+      </switch>
+    </svg>
+  </a>
+  <a th:with="pageNo = ${incident.id + 1}"
+     th:href="@{|/incidents/${pageNo}|}">
+    <span class="hidegt768 valign-middle mrs">Next</span>
+    <svg height="1em" viewBox="0 0 10 16" class="valign-middle">
+      <switch>
+        <polyline points="2,2 8,8 2,14" fill="none" stroke="#07E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <text>&gt;</text>
+      </switch>
+    </svg>
+  </a>
+</div>
+</body>
+</html>

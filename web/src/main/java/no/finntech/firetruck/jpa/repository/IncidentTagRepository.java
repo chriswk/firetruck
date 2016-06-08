@@ -1,8 +1,8 @@
-package no.finntech.firetruck.repository;
+package no.finntech.firetruck.jpa.repository;
 
 import java.util.Optional;
 
-import no.finntech.firetruck.domain.IncidentTag;
+import no.finntech.firetruck.jpa.domain.IncidentTag;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

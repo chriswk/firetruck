@@ -40,6 +40,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
     compile "org.springframework.boot:spring-boot-starter-log4j2"
+    compile "org.springframework.boot:spring-boot-devtools"
     compile "org.springframework.data:spring-data-rest-hal-browser"
     compile "no.finntech:commons-db:16.4"
     compile "no.finntech:commons-logging:16.4"

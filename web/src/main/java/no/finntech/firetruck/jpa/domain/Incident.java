@@ -1,43 +1,44 @@
-package no.finntech.firetruck.domain;
+package no.finntech.firetruck.jpa.domain;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
 @Entity
 public class Incident {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator="incident_gen")
+    @SequenceGenerator(name = "incident_gen", sequenceName = "INCIDENT_SEQ")
     private Long id;
     private String checkName;
     private String client;
     private String dc;
-    private ZonedDateTime last_execution;
+    private ZonedDateTime lastExecution;
 
     @Size(max = 10000)
     private String command;
     private Double duration;
     private ZonedDateTime executed;
-    private String finn_app;
-    private String finn_env;
+    private String finnApp;
+    private String finnEnv;
 
     @Size(max = 10000)
     private String output;
 
 
     @ManyToMany(mappedBy = "incidents")
-    private Set<Team> teams;
+    private List<Team> teams;
 
-    @OneToMany(mappedBy = "incidents")
-    private Set<IncidentTag> tags;
+    @ManyToMany(mappedBy = "incidents")
+    private List<IncidentTag> tags;
 
     @OneToMany(mappedBy = "incident")
     private List<Comment> comments;
@@ -78,13 +79,6 @@ public class Incident {
         this.dc = dc;
     }
 
-    public ZonedDateTime getLast_execution() {
-        return last_execution;
-    }
-
-    public void setLast_execution(ZonedDateTime last_execution) {
-        this.last_execution = last_execution;
-    }
 
     public String getCommand() {
         return command;
@@ -110,22 +104,6 @@ public class Incident {
         this.executed = executed;
     }
 
-    public String getFinn_app() {
-        return finn_app;
-    }
-
-    public void setFinn_app(String finn_app) {
-        this.finn_app = finn_app;
-    }
-
-    public String getFinn_env() {
-        return finn_env;
-    }
-
-    public void setFinn_env(String finn_env) {
-        this.finn_env = finn_env;
-    }
-
     public String getOutput() {
         return output;
     }
@@ -134,19 +112,19 @@ public class Incident {
         this.output = output;
     }
 
-    public Set<Team> getTeams() {
+    public List<Team> getTeams() {
         return teams;
     }
 
-    public void setTeams(Set<Team> teams) {
+    public void setTeams(List<Team> teams) {
         this.teams = teams;
     }
 
-    public Set<IncidentTag> getTags() {
+    public List<IncidentTag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<IncidentTag> tags) {
+    public void setTags(List<IncidentTag> tags) {
         this.tags = tags;
     }
 
@@ -158,9 +136,33 @@ public class Incident {
         this.comments = comments;
     }
 
+    public ZonedDateTime getLastExecution() {
+        return lastExecution;
+    }
+
+    public void setLastExecution(ZonedDateTime lastExecution) {
+        this.lastExecution = lastExecution;
+    }
+
+    public String getFinnApp() {
+        return finnApp;
+    }
+
+    public void setFinnApp(String finnApp) {
+        this.finnApp = finnApp;
+    }
+
+    public String getFinnEnv() {
+        return finnEnv;
+    }
+
+    public void setFinnEnv(String finnEnv) {
+        this.finnEnv = finnEnv;
+    }
+
     public void addTeam(Team team) {
         if (this.getTeams() == null) {
-            this.setTeams(new HashSet<>());
+            this.setTeams(new ArrayList<>());
         }
         this.getTeams().add(team);
         team.addIncident(this);
@@ -168,7 +170,7 @@ public class Incident {
 
     public void addTag(IncidentTag tag) {
         if (this.getTags() == null) {
-            this.setTags(new HashSet<>());
+            this.setTags(new ArrayList<>());
         }
         this.getTags().add(tag);
         tag.addIncident(this);

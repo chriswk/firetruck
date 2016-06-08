@@ -6,14 +6,14 @@ import java.util.Random;
 import javax.transaction.Transactional;
 
 import no.finntech.firetruck.TestConfig;
-import no.finntech.firetruck.domain.IncidentTag;
+import no.finntech.firetruck.jpa.domain.IncidentTag;
 import no.finntech.firetruck.parsing.ImmutableLastResult;
 import no.finntech.firetruck.parsing.ImmutableSensuIncident;
 import no.finntech.firetruck.parsing.LastResult;
 import no.finntech.firetruck.parsing.SensuIncident;
-import no.finntech.firetruck.repository.IncidentRepository;
-import no.finntech.firetruck.repository.IncidentTagRepository;
-import no.finntech.firetruck.repository.TeamRepository;
+import no.finntech.firetruck.jpa.repository.IncidentRepository;
+import no.finntech.firetruck.jpa.repository.IncidentTagRepository;
+import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -115,5 +115,6 @@ public class IncidentServiceTest {
         assertThat(databaseTag).isPresent();
         assertThat(databaseTag).hasValueSatisfying((i) -> assertThat(i.getIncidents()).hasSize(1));
     }
+
 
 }

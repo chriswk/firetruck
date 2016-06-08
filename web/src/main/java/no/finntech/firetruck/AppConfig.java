@@ -25,4 +25,5 @@ public class AppConfig {
                 .withFallbackConfiguration(ConstrettoFileToMapHelper.fromIni("classpath:database.ini"))
                 .build();
     }
+
 }

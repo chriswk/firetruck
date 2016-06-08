@@ -1,10 +1,11 @@
-package no.finntech.firetruck.repository;
-
-import no.finntech.firetruck.domain.Team;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+package no.finntech.firetruck.jpa.repository;
 
 import java.util.Optional;
+
+import no.finntech.firetruck.jpa.domain.Team;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 
 @RepositoryRestResource(collectionResourceRel = "teams", path = "teams")
