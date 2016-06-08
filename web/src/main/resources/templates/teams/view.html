@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+  <title th:text="${team.name}">Team page</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <table class="outerborder zebra-striped hover-rows">
+    <thead>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Team</td>
+      <td th:text="${team.name}">Tag</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="t1">5 Most recent incidents</td>
+    </tr>
+    <tr th:each="inc : ${mostRecentIncidents}">
+      <td><a th:href="@{|/incidents/${inc.id}|}" th:text="${inc.checkName}">Go to incident</a></td>
+      <td th:text="${inc.lastExecution}"></td>
+      <td th:text="${inc.finnApp}"></td>
+      <td th:text="${inc.finnEnv}"></td>
+    </tr>
+    </tbody>
+
+  </table>
+
+</div>
+</body>
+</html>

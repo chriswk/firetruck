@@ -1,6 +1,9 @@
 package no.finntech.firetruck.web;
 
+import java.util.Arrays;
+
 import no.finntech.firetruck.jpa.domain.Team;
+import no.finntech.firetruck.jpa.repository.IncidentRepository;
 import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class TeamsController {
     TeamRepository teamRepository;
+    IncidentRepository incidentRepository;
 
     @Autowired
-    public TeamsController(TeamRepository teamRepository) {
+    public TeamsController(TeamRepository teamRepository, IncidentRepository incidentRepository) {
         this.teamRepository = teamRepository;
+        this.incidentRepository = incidentRepository;
     }
 
     @RequestMapping("/teams")
@@ -30,7 +35,7 @@ public class TeamsController {
     public String view(@PathVariable("id") Long id, ModelMap modelMap) {
         Team team = teamRepository.findOne(id);
         modelMap.put("team", team);
-        modelMap.put("incidents", team.getIncidents());
+        modelMap.put("mostRecentIncidents", incidentRepository.findByTeams(Arrays.asList(team)));
         return "teams/view";
     }
 }

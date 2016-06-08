@@ -1,19 +1,22 @@
 package no.finntech.firetruck.service;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import javax.transaction.Transactional;
 
 import no.finntech.firetruck.TestConfig;
+import no.finntech.firetruck.jpa.domain.Incident;
 import no.finntech.firetruck.jpa.domain.IncidentTag;
+import no.finntech.firetruck.jpa.repository.IncidentRepository;
+import no.finntech.firetruck.jpa.repository.IncidentTagRepository;
+import no.finntech.firetruck.jpa.repository.TeamRepository;
 import no.finntech.firetruck.parsing.ImmutableLastResult;
 import no.finntech.firetruck.parsing.ImmutableSensuIncident;
 import no.finntech.firetruck.parsing.LastResult;
 import no.finntech.firetruck.parsing.SensuIncident;
-import no.finntech.firetruck.jpa.repository.IncidentRepository;
-import no.finntech.firetruck.jpa.repository.IncidentTagRepository;
-import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -114,6 +117,10 @@ public class IncidentServiceTest {
         Optional<IncidentTag> databaseTag = incidentTagRepository.findByName("database");
         assertThat(databaseTag).isPresent();
         assertThat(databaseTag).hasValueSatisfying((i) -> assertThat(i.getIncidents()).hasSize(1));
+
+        List<Incident> byIncidentTags = incidentRepository.findByTags(Arrays.asList(databaseTag.get()));
+        assertThat(byIncidentTags).hasSize(1);
+        assertThat(byIncidentTags.get(0).getCommand()).isEqualTo("http POST");
     }
 
 
