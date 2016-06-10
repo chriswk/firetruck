@@ -10,5 +10,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(path = "incidenttags", collectionResourceRel = "incidenttags")
 public interface IncidentTagRepository extends PagingAndSortingRepository<IncidentTag, Long> {
-    public Optional<IncidentTag> findByName(String name);
+    Optional<IncidentTag> findByName(String name);
 }
