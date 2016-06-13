@@ -2,7 +2,6 @@ package no.finntech.firetruck.service;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import javax.transaction.Transactional;
@@ -22,13 +21,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfig.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestConfig.class)
 public class IncidentServiceTest {
 
     @Autowired
@@ -118,9 +119,9 @@ public class IncidentServiceTest {
         assertThat(databaseTag).isPresent();
         assertThat(databaseTag).hasValueSatisfying((i) -> assertThat(i.getIncidents()).hasSize(1));
 
-        List<Incident> byIncidentTags = incidentRepository.findByTags(Arrays.asList(databaseTag.get()));
+        Page<Incident> byIncidentTags = incidentRepository.findByTags(Arrays.asList(databaseTag.get()), new PageRequest(0, 5));
         assertThat(byIncidentTags).hasSize(1);
-        assertThat(byIncidentTags.get(0).getCommand()).isEqualTo("http POST");
+        assertThat(byIncidentTags.getContent().get(0).getCommand()).isEqualTo("http POST");
     }
 
 

@@ -1,5 +1,7 @@
 package no.finntech.firetruck.jpa.domain;
 
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
@@ -23,15 +26,18 @@ public class Comment {
     @OneToMany
     private List<IncidentTag> tags;
 
+    private Timestamp posted;
+
     @ManyToOne
     private Incident incident;
 
     public Comment() {
     }
 
-    public Comment(String information, List<IncidentTag> tags, Incident incident) {
+    public Comment(String information, List<IncidentTag> tags, Timestamp posted, Incident incident) {
         this.information = information;
         this.tags = tags;
+        this.posted = posted;
         this.incident = incident;
     }
 
@@ -65,5 +71,18 @@ public class Comment {
 
     public void setIncident(Incident incident) {
         this.incident = incident;
+    }
+
+    public Timestamp getPosted() {
+        return posted;
+    }
+
+    public void setPosted(Timestamp posted) {
+        this.posted = posted;
+    }
+
+    @PrePersist
+    public void updatePosted() {
+        setPosted(Timestamp.from(ZonedDateTime.now().toInstant()));
     }
 }

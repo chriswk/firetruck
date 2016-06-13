@@ -27,6 +27,6 @@ compileJava {
 }
 dependencies {
     compileOnly "org.immutables:value:2.2.2"
-    compile "com.fasterxml.jackson.core:jackson-core:2.6.4"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.6.4"
+    compile "com.fasterxml.jackson.core:jackson-core:2.7.5"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.7.5"
 }

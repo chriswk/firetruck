@@ -1,4 +1,4 @@
--=[ FINN Firetruck ]=-
+-=[ FINN Firetruck on Spring boot ${spring-boot.formatted-version}]=-
 
                                                   )
      ,%,                                     ) _(___[]_

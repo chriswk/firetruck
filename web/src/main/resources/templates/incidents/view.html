@@ -51,7 +51,8 @@
     </svg>
   </a>
   <a th:with="pageNo = ${incident.id + 1}"
-     th:href="@{|/incidents/${pageNo}|}">
+     th:href="@{|/incidents/${pageNo}|}"
+     rel="next">
     <span class="hidegt768 valign-middle mrs">Next</span>
     <svg height="1em" viewBox="0 0 10 16" class="valign-middle">
       <switch>
@@ -60,6 +61,8 @@
       </switch>
     </svg>
   </a>
+  <div th:replace="/comments/input"></div>
+  <div th:replace="/comments/list"></div>
 </div>
 </body>
 </html>

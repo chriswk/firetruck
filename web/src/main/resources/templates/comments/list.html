@@ -1,0 +1,16 @@
+<div class="">
+  <table>
+    <thead>
+      <tr>
+        <th>Posted</th>
+        <th>Information</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="comment : ${comments}">
+        <td th:text="${comment.posted}">2016-03-11 10:30</td>
+        <td th:text="${comment.information}">Lorem ipsum dolor sit amet</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

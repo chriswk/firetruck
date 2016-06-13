@@ -175,5 +175,13 @@ public class Incident {
         this.getTags().add(tag);
         tag.addIncident(this);
     }
+
+    public void addComment(Comment comment) {
+        if (this.getComments() == null) {
+            this.setComments(new ArrayList<>());
+        }
+        this.getComments().add(comment);
+        comment.setIncident(this);
+    }
 }
 

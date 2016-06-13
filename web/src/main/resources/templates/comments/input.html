@@ -1,0 +1,25 @@
+<form id="commentForm" action="#" th:action="@{/api/comments}" method="post">
+  <input type="hidden" th:value="'/incident/' + ${incident.id}" name="incident" />
+  <fieldset>
+    <legend>Add comment</legend>
+    <div class="formelement">
+      <label for="information">Enter helpful information</label>
+      <div class="input">
+        <textarea id="information" rows="5" name="information"></textarea>
+      </div>
+    </div>
+    <div class="formelement">
+      <div class="input">
+        <input type="submit" onclick="postComment(); return false;" value="Post the comment" />
+      </div>
+    </div>
+  </fieldset>
+</form>
+<script type="text/javascript">
+  function postComment() {
+    var form = document.querySelector("#commentForm");
+    var data = new FormData(form);
+    var formJ = JSON.stringify(data.entries);
+    console.log(formJ);
+  }
+</script>

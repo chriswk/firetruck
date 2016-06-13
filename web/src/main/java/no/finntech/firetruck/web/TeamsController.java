@@ -7,7 +7,9 @@ import no.finntech.firetruck.jpa.repository.IncidentRepository;
 import no.finntech.firetruck.jpa.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +37,7 @@ public class TeamsController {
     public String view(@PathVariable("id") Long id, ModelMap modelMap) {
         Team team = teamRepository.findOne(id);
         modelMap.put("team", team);
-        modelMap.put("mostRecentIncidents", incidentRepository.findByTeams(Arrays.asList(team)));
+        modelMap.put("mostRecentIncidents", incidentRepository.findByTeams(Arrays.asList(team), new PageRequest(0, 5, Sort.Direction.DESC, "lastExecution")));
         return "teams/view";
     }
 }

@@ -1,7 +1,9 @@
 package no.finntech.firetruck.web;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
+import no.finntech.firetruck.jpa.domain.Comment;
 import no.finntech.firetruck.jpa.domain.Incident;
 import no.finntech.firetruck.jpa.repository.IncidentRepository;
 import no.finntech.firetruck.parsing.SensuIncident;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +55,8 @@ public class IncidentController {
     public String view(@PathVariable("id") Long id, ModelMap modelMap) {
         Incident byId = incidentRepository.findOne(id);
         modelMap.put("incident", byId);
+        modelMap.put("comments", byId.getComments());
+        modelMap.put("comment", new Comment());
         return "incidents/view";
     }
 
@@ -64,5 +69,12 @@ public class IncidentController {
             modelMap.put("nextPage", page.next().getPageNumber());
         }
         return "incidents/index";
+    }
+
+    @RequestMapping(value = "/incidents/{incidentid}/comments", method = RequestMethod.POST)
+    public String addComment(@PathVariable("incidentid") Long incidentId, @Valid @ModelAttribute("comment") Comment comment) {
+        comment.setId(null);
+        Incident i = incidentService.addComment(incidentId, comment);
+        return "redirect:/incidents/" +incidentId;
     }
 }

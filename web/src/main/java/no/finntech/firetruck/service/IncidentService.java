@@ -2,6 +2,7 @@ package no.finntech.firetruck.service;
 
 import java.util.List;
 
+import no.finntech.firetruck.jpa.domain.Comment;
 import no.finntech.firetruck.jpa.domain.Incident;
 import no.finntech.firetruck.jpa.domain.IncidentTag;
 import no.finntech.firetruck.jpa.domain.Team;
@@ -24,7 +25,8 @@ public class IncidentService {
     TeamRepository teamRepository;
 
     @Autowired
-    public IncidentService(IncidentRepository incidentRepository, IncidentTagRepository incidentTagRepository, TeamRepository teamRepository) {
+    public IncidentService(IncidentRepository incidentRepository, IncidentTagRepository incidentTagRepository,
+                           TeamRepository teamRepository) {
         this.incidentRepository = incidentRepository;
         this.incidentTagRepository = incidentTagRepository;
         this.teamRepository = teamRepository;
@@ -81,4 +83,9 @@ public class IncidentService {
         return incidentRepository.findOne(id);
     }
 
+    public Incident addComment(Long incidentId, Comment comment) {
+        Incident i = findById(incidentId);
+        i.addComment(comment);
+        return incidentRepository.save(i);
+    }
 }
