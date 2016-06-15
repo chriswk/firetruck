@@ -68,9 +68,9 @@ incidentListDecoder =
         |: ("incidents" := listIncidentDecoder)
 
 
-incidentCollectionDecoder : Decoder IncidentHalModel
+incidentCollectionDecoder : Decoder IncidentsHalModel
 incidentCollectionDecoder =
-    succeed IncidentHalModel
+    succeed IncidentsHalModel
         |: ("_embedded" := incidentListDecoder)
         |: ("_links" := linksDecoder)
         |: ("page" := pageDecoder)

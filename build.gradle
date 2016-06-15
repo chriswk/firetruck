@@ -5,3 +5,7 @@ subprojects {
     group = 'no.finntech.firetruck'
     version = '1.0-SNAPSHOT'
 }
+
+task wrapper(type: Wrapper) {
+  gradleVersion = "2.14"
+}

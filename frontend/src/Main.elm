@@ -1,8 +1,8 @@
 module Main exposing (..)
 
 import Html.App as Html
-import Components.Incident.Tasks exposing (fetchMostRecentIncidents)
-import Components.Incident.Models exposing (Model, Msg(IncidentFetchFail, IncidentFetchSucceed, NoOp), Incident)
+import Components.Incident.Tasks exposing (fetchMostRecentIncidents, fetchIncident)
+import Components.Incident.Models exposing (Model, Msg(..), Incident)
 import Components.Incident.Views exposing (incidentTable)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -13,6 +13,7 @@ initialModel =
     { sort = Nothing
     , incidents = []
     , lastError = Nothing
+    , currentIncident = Nothing
     }
 
 
@@ -32,11 +33,18 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        IncidentFetchSucceed apiResponse ->
+        IncidentsFetchSucceed apiResponse ->
             ( { model | incidents = apiResponse.incidents.incidents }, Cmd.none )
 
-        IncidentFetchFail a ->
+        IncidentsFetchFail a ->
             ( { model | lastError = Just a }, Cmd.none )
+        IncidentFetchFail e ->
+            ( { model | lastError = Just e }, Cmd.none )
+        IncidentFetchSucceed inc ->
+            ( { model | currentIncident = Just inc }, Cmd.none )
+        FetchIncident url ->
+            ( model, (fetchIncident url) )
+
 
 
 view : Model -> Html Msg

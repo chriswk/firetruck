@@ -8,14 +8,17 @@ type alias Model =
     { sort : Maybe Sort
     , incidents : List Incident
     , lastError : Maybe Http.Error
+    , currentIncident : Maybe Incident
     }
 
 
 type Msg
     = NoOp
+    | IncidentsFetchFail Http.Error
+    | IncidentsFetchSucceed IncidentsHalModel
     | IncidentFetchFail Http.Error
-    | IncidentFetchSucceed IncidentHalModel
-
+    | IncidentFetchSucceed Incident
+    | FetchIncident String
 
 type alias Links =
     { first : Link
@@ -53,7 +56,7 @@ type alias Page =
     }
 
 
-type alias IncidentHalModel =
+type alias IncidentsHalModel =
     { incidents : IncidentList
     , links : Links
     , page : Page
