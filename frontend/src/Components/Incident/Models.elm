@@ -6,27 +6,32 @@ import Http exposing (Error)
 
 type alias Model =
     { sort : Maybe Sort
-    , incidents : List Incident
+    , incidentsPage : Maybe IncidentsPage
     , lastError : Maybe Http.Error
     , currentIncident : Maybe Incident
+    , pageSize : Int
     }
 
 
 type Msg
     = NoOp
+    | DisplayIncidentList
+    | IncidentPage Int
     | IncidentsFetchFail Http.Error
-    | IncidentsFetchSucceed IncidentsHalModel
+    | IncidentsFetchSucceed IncidentsPage
     | IncidentFetchFail Http.Error
     | IncidentFetchSucceed Incident
     | FetchIncident String
 
+
 type alias Links =
     { first : Link
     , self : Link
-    , next : Link
+    , next : Maybe Link
     , last : Link
     , profile : Link
     , search : Link
+    , prev : Maybe Link
     }
 
 
@@ -48,7 +53,7 @@ type alias Sort =
     ( String, Direction )
 
 
-type alias Page =
+type alias Pagination =
     { size : Int
     , totalElements : Int
     , totalPages : Int
@@ -56,10 +61,10 @@ type alias Page =
     }
 
 
-type alias IncidentsHalModel =
-    { incidents : IncidentList
+type alias IncidentsPage =
+    { incidents : IncidentsList
     , links : Links
-    , page : Page
+    , pagination : Pagination
     }
 
 
@@ -78,7 +83,7 @@ type alias Incident =
     }
 
 
-type alias IncidentList =
+type alias IncidentsList =
     { incidents : List Incident
     }
 

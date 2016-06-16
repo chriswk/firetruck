@@ -2,7 +2,7 @@ module Components.Incident.Decoders exposing (..)
 
 import Components.Incident.Models exposing (..)
 import Json.Decode.Extra exposing ((|:), date)
-import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, list, float, (:=), map)
+import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, list, float, (:=), map, oneOf, null, maybe)
 
 
 linkDecoder : Decoder Link
@@ -11,9 +11,9 @@ linkDecoder =
         |: ("href" := string)
 
 
-pageDecoder : Decoder Page
+pageDecoder : Decoder Pagination
 pageDecoder =
-    succeed Page
+    succeed Pagination
         |: ("size" := int)
         |: ("totalElements" := int)
         |: ("totalPages" := int)
@@ -25,10 +25,11 @@ linksDecoder =
     succeed Links
         |: ("first" := linkDecoder)
         |: ("self" := linkDecoder)
-        |: ("next" := linkDecoder)
+        |: (maybe ("next" := linkDecoder))
         |: ("last" := linkDecoder)
         |: ("profile" := linkDecoder)
         |: ("search" := linkDecoder)
+        |: (maybe ("prev" := linkDecoder))
 
 
 incidentLinksDecoder : Decoder IncidentLinks
@@ -62,15 +63,15 @@ listIncidentDecoder =
     list incidentDecoder
 
 
-incidentListDecoder : Decoder IncidentList
+incidentListDecoder : Decoder IncidentsList
 incidentListDecoder =
-    succeed IncidentList
+    succeed IncidentsList
         |: ("incidents" := listIncidentDecoder)
 
 
-incidentCollectionDecoder : Decoder IncidentsHalModel
+incidentCollectionDecoder : Decoder IncidentsPage
 incidentCollectionDecoder =
-    succeed IncidentsHalModel
+    succeed IncidentsPage
         |: ("_embedded" := incidentListDecoder)
         |: ("_links" := linksDecoder)
         |: ("page" := pageDecoder)

@@ -1,25 +1,24 @@
 module Main exposing (..)
 
 import Html.App as Html
-import Components.Incident.Tasks exposing (fetchMostRecentIncidents, fetchIncident)
+import Components.Incident.Tasks exposing (fetchMostRecentIncidents, fetchIncident, fetchIncidents)
 import Components.Incident.Models exposing (Model, Msg(..), Incident)
-import Components.Incident.Views exposing (incidentTable)
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Components.Incident.Views exposing (view)
 
 
 initialModel : Model
 initialModel =
     { sort = Nothing
-    , incidents = []
+    , incidentsPage = Nothing
     , lastError = Nothing
     , currentIncident = Nothing
+    , pageSize = 20
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, fetchMostRecentIncidents )
+    ( initialModel, fetchIncidents "0" )
 
 
 subscriptions : Model -> Sub Msg
@@ -33,24 +32,26 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        IncidentsFetchSucceed apiResponse ->
-            ( { model | incidents = apiResponse.incidents.incidents }, Cmd.none )
+        IncidentsFetchSucceed incidentsPage ->
+            ( { model | incidentsPage = Just incidentsPage, currentIncident = Nothing }, Cmd.none )
 
         IncidentsFetchFail a ->
             ( { model | lastError = Just a }, Cmd.none )
+
         IncidentFetchFail e ->
             ( { model | lastError = Just e }, Cmd.none )
+
         IncidentFetchSucceed inc ->
-            ( { model | currentIncident = Just inc }, Cmd.none )
+            ( { model | currentIncident = Just inc, incidentsPage = Nothing }, Cmd.none )
+
         FetchIncident url ->
             ( model, (fetchIncident url) )
 
+        DisplayIncidentList ->
+            ( model, fetchMostRecentIncidents )
 
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ incidentTable model.incidents ]
+        IncidentPage pageNo ->
+            ( model, fetchIncidents (toString pageNo) )
 
 
 main : Program Never
