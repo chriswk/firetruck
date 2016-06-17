@@ -84,6 +84,36 @@ lastLink pagination =
             [ lastPageIcon ]
 
 
+pageLink : Pagination -> Int -> Html Msg
+pageLink pagination page =
+    let
+        pageText =
+            toString (page + 1)
+
+        link =
+            if (pagination.currentPage == page) then
+                b [ class "phs valign-middle" ] [ text pageText ]
+            else
+                a [ href "#", class "mrn pam", onClick (IncidentPage page) ] [ text pageText ]
+    in
+        link
+
+
+pageLinks : Pagination -> List (Html Msg)
+pageLinks pagination =
+    let
+        lastPage =
+            pagination.totalPages
+
+        range =
+            [0..lastPage - 1]
+
+        pages =
+            List.map (pageLink pagination) range
+    in
+        pages
+
+
 paginate : Pagination -> Html Msg
 paginate pagination =
     let
@@ -111,10 +141,12 @@ paginate pagination =
 
         lastLi =
             lastLink pagination
+
+        separatePages =
+            pageLinks pagination
+
+        allLinks =
+            List.concat [ [ startLink, prevLi ], separatePages, [ nextLi, lastLi ] ]
     in
         div [ class "t4 centerify r-margin" ]
-            [ startLink
-            , prevLi
-            , nextLi
-            , lastLi
-            ]
+            allLinks
