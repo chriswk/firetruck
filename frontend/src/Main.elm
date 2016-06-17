@@ -1,24 +1,25 @@
 module Main exposing (..)
 
 import Html.App as Html
-import Components.Incident.Tasks exposing (fetchMostRecentIncidents, fetchIncident, fetchIncidents)
+import Components.Incident.Tasks exposing (fetchIncident, fetchIncidents, fetchMostRecentIncidents)
 import Components.Incident.Models exposing (Model, Msg(..), Incident)
 import Components.Incident.Views exposing (view)
 
 
 initialModel : Model
 initialModel =
-    { sort = Nothing
-    , incidentsPage = Nothing
+    { incidentsPage = Nothing
     , lastError = Nothing
     , currentIncident = Nothing
     , pageSize = 20
+    , sort = Nothing
+    , currentPage = 0
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, fetchIncidents "0" )
+    ( initialModel, fetchMostRecentIncidents )
 
 
 subscriptions : Model -> Sub Msg
@@ -32,12 +33,6 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        IncidentsFetchSucceed incidentsPage ->
-            ( { model | incidentsPage = Just incidentsPage, currentIncident = Nothing }, Cmd.none )
-
-        IncidentsFetchFail a ->
-            ( { model | lastError = Just a }, Cmd.none )
-
         IncidentFetchFail e ->
             ( { model | lastError = Just e }, Cmd.none )
 
@@ -47,11 +42,35 @@ update msg model =
         FetchIncident url ->
             ( model, (fetchIncident url) )
 
-        DisplayIncidentList ->
-            ( model, fetchMostRecentIncidents )
+        IncidentsFetchSucceed incidentsPage ->
+            ( { model | incidentsPage = Just incidentsPage, currentIncident = Nothing }, Cmd.none )
 
-        IncidentPage pageNo ->
-            ( model, fetchIncidents (toString pageNo) )
+        IncidentsFetchFail err ->
+            ( { model | lastError = Just err }, Cmd.none )
+
+        UpdatePageSize size ->
+            let
+                updatedModel =
+                    { model | pageSize = size }
+            in
+                ( updatedModel, (fetchIncidents updatedModel) )
+
+        UpdatePage pageNo ->
+            let
+                updatedModel =
+                    { model | currentPage = pageNo }
+            in
+                ( updatedModel, (fetchIncidents updatedModel) )
+
+        UpdateSort sort ->
+            let
+                updatedModel =
+                    { model | sort = Just sort }
+            in
+                ( updatedModel, (fetchIncidents updatedModel) )
+
+        DisplayIncidentList ->
+            ( model, (fetchIncidents model) )
 
 
 main : Program Never

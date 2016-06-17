@@ -2,7 +2,7 @@ module Components.Incident.Decoders exposing (..)
 
 import Components.Incident.Models exposing (..)
 import Json.Decode.Extra exposing ((|:), date)
-import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, list, float, (:=), map, oneOf, null, maybe)
+import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, list, float, (:=), map, oneOf, null, maybe, at)
 
 
 linkDecoder : Decoder Link
@@ -63,15 +63,9 @@ listIncidentDecoder =
     list incidentDecoder
 
 
-incidentListDecoder : Decoder IncidentsList
-incidentListDecoder =
-    succeed IncidentsList
-        |: ("incidents" := listIncidentDecoder)
-
-
 incidentCollectionDecoder : Decoder IncidentsPage
 incidentCollectionDecoder =
     succeed IncidentsPage
-        |: ("_embedded" := incidentListDecoder)
+        |: at [ "_embedded", "incidents" ] listIncidentDecoder
         |: ("_links" := linksDecoder)
         |: ("page" := pageDecoder)

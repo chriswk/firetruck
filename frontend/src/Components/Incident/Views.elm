@@ -42,13 +42,12 @@ incidentRow incident =
         finnEnv =
             toString incident.finnEnv
     in
-        tr []
-            [ td [] [ div [ onClick (FetchIncident incidentUrl) ] [ text id ] ]
+        tr [ onClick (FetchIncident incidentUrl) ]
+            [ td [] [ text id ]
             , td [] [ text checkName ]
             , td [] [ text lastExecution ]
             , td [] [ text finnApp ]
             , td [] [ text finnEnv ]
-            , td [] [ div [ onClick (FetchIncident incidentUrl) ] [ text "View" ] ]
             ]
 
 
@@ -59,17 +58,17 @@ incidentsPageView model =
             text ""
 
         Just page ->
-            listView page
+            listView model page
 
 
-listView : IncidentsPage -> Html Msg
-listView page =
+listView : Model -> IncidentsPage -> Html Msg
+listView model page =
     let
         pagination =
             paginate page.pagination
 
         overView =
-            incidentsTable page.incidents
+            incidentsTable model page.incidents
     in
         div []
             [ pagination
@@ -83,21 +82,60 @@ tableStyle =
     class "outerborder zebra-striped hover-rows"
 
 
-incidentsTable : IncidentsList -> Html Msg
-incidentsTable list =
+findDirection : String -> Sort -> Direction
+findDirection column sort =
+    if sort.column == column then
+        if sort.direction == ASC then
+            DESC
+        else
+            ASC
+    else
+        ASC
+
+
+findSort : String -> Maybe Sort -> Sort
+findSort column sort =
+    let
+        direction =
+            case sort of
+                Nothing ->
+                    ASC
+
+                Just s ->
+                    (findDirection column s)
+    in
+        Sort column direction
+
+
+incidentsTable : Model -> List Incident -> Html Msg
+incidentsTable model list =
     let
         incidentRows =
-            List.map incidentRow list.incidents
+            List.map incidentRow list
+
+        idSort =
+            findSort "id" model.sort
+
+        checkSort =
+            findSort "checkName" model.sort
+
+        lastExSort =
+            findSort "lastExecution" model.sort
+
+        finnAppSort =
+            findSort "finnApp" model.sort
+
+        finnEnvSort =
+            findSort "finnEnv" model.sort
     in
         table [ tableStyle ]
             [ thead []
                 [ tr []
-                    [ th [] [ text "Id" ]
-                    , th [] [ text "Checkname" ]
-                    , th [] [ text "Last executed" ]
-                    , th [] [ text "Finn app" ]
-                    , th [] [ text "Finn env" ]
-                    , th [] []
+                    [ th [ onClick (UpdateSort idSort) ] [ text "Id" ]
+                    , th [ onClick (UpdateSort checkSort) ] [ text "Checkname" ]
+                    , th [ onClick (UpdateSort lastExSort) ] [ text "Last executed" ]
+                    , th [ onClick (UpdateSort finnAppSort) ] [ text "Finn app" ]
+                    , th [ onClick (UpdateSort finnEnvSort) ] [ text "Finn env" ]
                     ]
                 ]
             , tbody [] incidentRows

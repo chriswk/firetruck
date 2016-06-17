@@ -14,7 +14,7 @@ ariaLabel label =
 
 startLink : Html Msg
 startLink =
-    a [ rel "start", href "#", class "mrn pam", ariaLabel "First", onClick (IncidentPage 0) ]
+    a [ rel "start", href "#", class "mrn pam", ariaLabel "First", onClick (UpdatePage 0) ]
         [ firstPageIcon ]
 
 
@@ -25,7 +25,7 @@ prevAnchor currentPage =
             currentPage - 1
 
         clickCmd =
-            IncidentPage newPage
+            UpdatePage newPage
     in
         a [ rel "prev", href "#", class "mrn pam", ariaLabel "Previous", onClick clickCmd ]
             [ prevPageIcon ]
@@ -38,7 +38,7 @@ nextAnchor currentPage =
             currentPage + 1
 
         clickCmd =
-            IncidentPage nextPage
+            UpdatePage nextPage
     in
         a [ rel "next", href "#", class "mrn pam", ariaLabel "Next", onClick clickCmd ]
             [ nextPageIcon ]
@@ -80,7 +80,7 @@ lastLink pagination =
         lastPage =
             pagination.totalPages - 1
     in
-        a [ rel "last", href "#", class "mrn pam", ariaLabel "Last", onClick (IncidentPage lastPage) ]
+        a [ rel "last", href "#", class "mrn pam", ariaLabel "Last", onClick (UpdatePage lastPage) ]
             [ lastPageIcon ]
 
 
@@ -94,7 +94,7 @@ pageLink pagination page =
             if (pagination.currentPage == page) then
                 b [ class "phs valign-middle" ] [ text pageText ]
             else
-                a [ href "#", class "mrn pam", onClick (IncidentPage page) ] [ text pageText ]
+                a [ href "#", class "mrn pam", onClick (UpdatePage page) ] [ text pageText ]
     in
         link
 

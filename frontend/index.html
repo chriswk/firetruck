@@ -8084,9 +8084,9 @@ var _evancz$elm_http$Http$post = F3(
 			decoder,
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
-var _chriswk$firetruck$Components_Incident_Models$Model = F5(
-	function (a, b, c, d, e) {
-		return {sort: a, incidentsPage: b, lastError: c, currentIncident: d, pageSize: e};
+var _chriswk$firetruck$Components_Incident_Models$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {incidentsPage: a, lastError: b, currentIncident: c, pageSize: d, sort: e, currentPage: f};
 	});
 var _chriswk$firetruck$Components_Incident_Models$Links = F7(
 	function (a, b, c, d, e, f, g) {
@@ -8098,6 +8098,10 @@ var _chriswk$firetruck$Components_Incident_Models$Link = function (a) {
 var _chriswk$firetruck$Components_Incident_Models$IncidentLinks = F5(
 	function (a, b, c, d, e) {
 		return {self: a, incident: b, tags: c, comments: d, teams: e};
+	});
+var _chriswk$firetruck$Components_Incident_Models$Sort = F2(
+	function (a, b) {
+		return {column: a, direction: b};
 	});
 var _chriswk$firetruck$Components_Incident_Models$Pagination = F4(
 	function (a, b, c, d) {
@@ -8142,16 +8146,21 @@ var _chriswk$firetruck$Components_Incident_Models$IncidentFetchSucceed = functio
 var _chriswk$firetruck$Components_Incident_Models$IncidentFetchFail = function (a) {
 	return {ctor: 'IncidentFetchFail', _0: a};
 };
+var _chriswk$firetruck$Components_Incident_Models$UpdatePageSize = function (a) {
+	return {ctor: 'UpdatePageSize', _0: a};
+};
+var _chriswk$firetruck$Components_Incident_Models$UpdateSort = function (a) {
+	return {ctor: 'UpdateSort', _0: a};
+};
+var _chriswk$firetruck$Components_Incident_Models$UpdatePage = function (a) {
+	return {ctor: 'UpdatePage', _0: a};
+};
 var _chriswk$firetruck$Components_Incident_Models$IncidentsFetchSucceed = function (a) {
 	return {ctor: 'IncidentsFetchSucceed', _0: a};
 };
 var _chriswk$firetruck$Components_Incident_Models$IncidentsFetchFail = function (a) {
 	return {ctor: 'IncidentsFetchFail', _0: a};
 };
-var _chriswk$firetruck$Components_Incident_Models$IncidentPage = function (a) {
-	return {ctor: 'IncidentPage', _0: a};
-};
-var _chriswk$firetruck$Components_Incident_Models$DisplayIncidentList = {ctor: 'DisplayIncidentList'};
 var _chriswk$firetruck$Components_Incident_Models$NoOp = {ctor: 'NoOp'};
 var _chriswk$firetruck$Components_Incident_Models$DESC = {ctor: 'DESC'};
 var _chriswk$firetruck$Components_Incident_Models$ASC = {ctor: 'ASC'};
@@ -8398,17 +8407,13 @@ var _chriswk$firetruck$Components_Incident_Decoders$linksDecoder = A2(
 							_elm_lang$core$Json_Decode$succeed(_chriswk$firetruck$Components_Incident_Models$Links),
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'first', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)),
 						A2(_elm_lang$core$Json_Decode_ops[':='], 'self', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)),
-					A2(
-						_elm_lang$core$Json_Decode_ops[':='],
-						'next',
-						_elm_lang$core$Json_Decode$maybe(_chriswk$firetruck$Components_Incident_Decoders$linkDecoder))),
+					_elm_lang$core$Json_Decode$maybe(
+						A2(_elm_lang$core$Json_Decode_ops[':='], 'next', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder))),
 				A2(_elm_lang$core$Json_Decode_ops[':='], 'last', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)),
 			A2(_elm_lang$core$Json_Decode_ops[':='], 'profile', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)),
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'search', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)),
-	A2(
-		_elm_lang$core$Json_Decode_ops[':='],
-		'prev',
-		_elm_lang$core$Json_Decode$maybe(_chriswk$firetruck$Components_Incident_Decoders$linkDecoder)));
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'prev', _chriswk$firetruck$Components_Incident_Decoders$linkDecoder)));
 var _chriswk$firetruck$Components_Incident_Decoders$incidentLinksDecoder = A2(
 	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
 	A2(
@@ -8460,10 +8465,6 @@ var _chriswk$firetruck$Components_Incident_Decoders$incidentDecoder = A2(
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'output', _elm_lang$core$Json_Decode$string)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], '_links', _chriswk$firetruck$Components_Incident_Decoders$incidentLinksDecoder));
 var _chriswk$firetruck$Components_Incident_Decoders$listIncidentDecoder = _elm_lang$core$Json_Decode$list(_chriswk$firetruck$Components_Incident_Decoders$incidentDecoder);
-var _chriswk$firetruck$Components_Incident_Decoders$incidentListDecoder = A2(
-	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
-	_elm_lang$core$Json_Decode$succeed(_chriswk$firetruck$Components_Incident_Models$IncidentsList),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'incidents', _chriswk$firetruck$Components_Incident_Decoders$listIncidentDecoder));
 var _chriswk$firetruck$Components_Incident_Decoders$incidentCollectionDecoder = A2(
 	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
 	A2(
@@ -8471,7 +8472,11 @@ var _chriswk$firetruck$Components_Incident_Decoders$incidentCollectionDecoder = 
 		A2(
 			_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
 			_elm_lang$core$Json_Decode$succeed(_chriswk$firetruck$Components_Incident_Models$IncidentsPage),
-			A2(_elm_lang$core$Json_Decode_ops[':='], '_embedded', _chriswk$firetruck$Components_Incident_Decoders$incidentListDecoder)),
+			A2(
+				_elm_lang$core$Json_Decode$at,
+				_elm_lang$core$Native_List.fromArray(
+					['_embedded', 'incidents']),
+				_chriswk$firetruck$Components_Incident_Decoders$listIncidentDecoder)),
 		A2(_elm_lang$core$Json_Decode_ops[':='], '_links', _chriswk$firetruck$Components_Incident_Decoders$linksDecoder)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'page', _chriswk$firetruck$Components_Incident_Decoders$pageDecoder));
 var _elm_lang$html$Html_Attributes$attribute = _elm_lang$virtual_dom$VirtualDom$attribute;
@@ -8925,6 +8930,42 @@ var _elm_lang$html$Html_Events$Options = F2(
 	function (a, b) {
 		return {stopPropagation: a, preventDefault: b};
 	});
+var _chriswk$firetruck$Components_Incident_Pagination$pageLink = F2(
+	function (pagination, page) {
+		var pageText = _elm_lang$core$Basics$toString(page + 1);
+		var link = _elm_lang$core$Native_Utils.eq(pagination.currentPage, page) ? A2(
+			_elm_lang$html$Html$b,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('phs valign-middle')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(pageText)
+				])) : A2(
+			_elm_lang$html$Html$a,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$href('#'),
+					_elm_lang$html$Html_Attributes$class('mrn pam'),
+					_elm_lang$html$Html_Events$onClick(
+					_chriswk$firetruck$Components_Incident_Models$UpdatePage(page))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(pageText)
+				]));
+		return link;
+	});
+var _chriswk$firetruck$Components_Incident_Pagination$pageLinks = function (pagination) {
+	var lastPage = pagination.totalPages;
+	var range = _elm_lang$core$Native_List.range(0, lastPage - 1);
+	var pages = A2(
+		_elm_lang$core$List$map,
+		_chriswk$firetruck$Components_Incident_Pagination$pageLink(pagination),
+		range);
+	return pages;
+};
 var _chriswk$firetruck$Components_Incident_Pagination$ariaLabel = function (label) {
 	return A2(_elm_lang$html$Html_Attributes$attribute, 'aria-label', label);
 };
@@ -8937,13 +8978,13 @@ var _chriswk$firetruck$Components_Incident_Pagination$startLink = A2(
 			_elm_lang$html$Html_Attributes$class('mrn pam'),
 			_chriswk$firetruck$Components_Incident_Pagination$ariaLabel('First'),
 			_elm_lang$html$Html_Events$onClick(
-			_chriswk$firetruck$Components_Incident_Models$IncidentPage(0))
+			_chriswk$firetruck$Components_Incident_Models$UpdatePage(0))
 		]),
 	_elm_lang$core$Native_List.fromArray(
 		[_chriswk$firetruck$Components_Icons$firstPageIcon]));
 var _chriswk$firetruck$Components_Incident_Pagination$prevAnchor = function (currentPage) {
 	var newPage = currentPage - 1;
-	var clickCmd = _chriswk$firetruck$Components_Incident_Models$IncidentPage(newPage);
+	var clickCmd = _chriswk$firetruck$Components_Incident_Models$UpdatePage(newPage);
 	return A2(
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
@@ -8964,7 +9005,7 @@ var _chriswk$firetruck$Components_Incident_Pagination$prevLink = function (curre
 };
 var _chriswk$firetruck$Components_Incident_Pagination$nextAnchor = function (currentPage) {
 	var nextPage = currentPage + 1;
-	var clickCmd = _chriswk$firetruck$Components_Incident_Models$IncidentPage(nextPage);
+	var clickCmd = _chriswk$firetruck$Components_Incident_Models$UpdatePage(nextPage);
 	return A2(
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
@@ -8996,12 +9037,13 @@ var _chriswk$firetruck$Components_Incident_Pagination$lastLink = function (pagin
 				_elm_lang$html$Html_Attributes$class('mrn pam'),
 				_chriswk$firetruck$Components_Incident_Pagination$ariaLabel('Last'),
 				_elm_lang$html$Html_Events$onClick(
-				_chriswk$firetruck$Components_Incident_Models$IncidentPage(lastPage))
+				_chriswk$firetruck$Components_Incident_Models$UpdatePage(lastPage))
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[_chriswk$firetruck$Components_Icons$lastPageIcon]));
 };
 var _chriswk$firetruck$Components_Incident_Pagination$paginate = function (pagination) {
+	var separatePages = _chriswk$firetruck$Components_Incident_Pagination$pageLinks(pagination);
 	var lastLi = _chriswk$firetruck$Components_Incident_Pagination$lastLink(pagination);
 	var nextL = _chriswk$firetruck$Components_Incident_Pagination$nextLink(pagination);
 	var nextLi = function () {
@@ -9021,14 +9063,39 @@ var _chriswk$firetruck$Components_Incident_Pagination$paginate = function (pagin
 			return _p1._0;
 		}
 	}();
+	var allLinks = _elm_lang$core$List$concat(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$core$Native_List.fromArray(
+				[_chriswk$firetruck$Components_Incident_Pagination$startLink, prevLi]),
+				separatePages,
+				_elm_lang$core$Native_List.fromArray(
+				[nextLi, lastLi])
+			]));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Attributes$class('t4 centerify r-margin')
 			]),
-		_elm_lang$core$Native_List.fromArray(
-			[_chriswk$firetruck$Components_Incident_Pagination$startLink, prevLi, nextLi, lastLi]));
+		allLinks);
+};
+var _chriswk$firetruck$Components_Incident_Tasks$sortParam = function (sort) {
+	var dir = function () {
+		var _p0 = sort.direction;
+		if (_p0.ctor === 'ASC') {
+			return 'asc';
+		} else {
+			return 'desc';
+		}
+	}();
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		sort.column,
+		A2(_elm_lang$core$Basics_ops['++'], ',', dir));
+};
+var _chriswk$firetruck$Components_Incident_Tasks$getIncidentList = function (url) {
+	return A2(_evancz$elm_http$Http$get, _chriswk$firetruck$Components_Incident_Decoders$incidentCollectionDecoder, url);
 };
 var _chriswk$firetruck$Components_Incident_Tasks$getIncident = function (url) {
 	return A2(_evancz$elm_http$Http$get, _chriswk$firetruck$Components_Incident_Decoders$incidentDecoder, url);
@@ -9040,23 +9107,49 @@ var _chriswk$firetruck$Components_Incident_Tasks$fetchIncident = function (uri) 
 		_chriswk$firetruck$Components_Incident_Models$IncidentFetchSucceed,
 		_chriswk$firetruck$Components_Incident_Tasks$getIncident(uri));
 };
-var _chriswk$firetruck$Components_Incident_Tasks$getIncidentList = function (url) {
-	return A2(_evancz$elm_http$Http$get, _chriswk$firetruck$Components_Incident_Decoders$incidentCollectionDecoder, url);
-};
 var _chriswk$firetruck$Components_Incident_Tasks$incidentBaseUrl = 'http://localhost:9090/api/incidents';
 var _chriswk$firetruck$Components_Incident_Tasks$fetchMostRecentIncidents = A3(
 	_elm_lang$core$Task$perform,
 	_chriswk$firetruck$Components_Incident_Models$IncidentsFetchFail,
 	_chriswk$firetruck$Components_Incident_Models$IncidentsFetchSucceed,
 	_chriswk$firetruck$Components_Incident_Tasks$getIncidentList(_chriswk$firetruck$Components_Incident_Tasks$incidentBaseUrl));
-var _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents = function (pageNo) {
-	var uri = A2(
-		_evancz$elm_http$Http$url,
-		_chriswk$firetruck$Components_Incident_Tasks$incidentBaseUrl,
+var _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents = function (model) {
+	var pageStr = _elm_lang$core$Native_List.fromArray(
+		[
+			{
+			ctor: '_Tuple2',
+			_0: 'page',
+			_1: _elm_lang$core$Basics$toString(model.currentPage)
+		}
+		]);
+	var limitStr = _elm_lang$core$Native_List.fromArray(
+		[
+			{
+			ctor: '_Tuple2',
+			_0: 'size',
+			_1: _elm_lang$core$Basics$toString(model.pageSize)
+		}
+		]);
+	var sortString = function () {
+		var _p1 = model.sort;
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		} else {
+			return _elm_lang$core$Native_List.fromArray(
+				[
+					{
+					ctor: '_Tuple2',
+					_0: 'sort',
+					_1: _chriswk$firetruck$Components_Incident_Tasks$sortParam(_p1._0)
+				}
+				]);
+		}
+	}();
+	var params = _elm_lang$core$List$concat(
 		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 'page', _1: pageNo}
-			]));
+			[sortString, limitStr, pageStr]));
+	var uri = A2(_evancz$elm_http$Http$url, _chriswk$firetruck$Components_Incident_Tasks$incidentBaseUrl, params);
 	return A3(
 		_elm_lang$core$Task$perform,
 		_chriswk$firetruck$Components_Incident_Models$IncidentsFetchFail,
@@ -9392,6 +9485,15 @@ var _mgold$elm_date_format$Date_Format$format = F2(
 			s);
 	});
 var _mgold$elm_date_format$Date_Format$formatISO8601 = _mgold$elm_date_format$Date_Format$format('%Y-%m-%dT%H:%M:%SZ');
+var _chriswk$firetruck$Components_Incident_Views$errorPrinter = function (model) {
+	var _p0 = model.lastError;
+	if (_p0.ctor === 'Nothing') {
+		return _elm_lang$html$Html$text('');
+	} else {
+		return _elm_lang$html$Html$text(
+			_elm_lang$core$Basics$toString(_p0._0));
+	}
+};
 var _chriswk$firetruck$Components_Incident_Views$finnFooter = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9604,24 +9706,14 @@ var _chriswk$firetruck$Components_Incident_Views$incidentTable = function (incid
 };
 var _chriswk$firetruck$Components_Incident_Views$incidentView = function (model) {
 	var incView = function () {
-		var _p0 = model.currentIncident;
-		if (_p0.ctor === 'Nothing') {
-			return A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
+		var _p1 = model.currentIncident;
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$html$Html$text('');
 		} else {
-			return _chriswk$firetruck$Components_Incident_Views$incidentTable(_p0._0);
+			return _chriswk$firetruck$Components_Incident_Views$incidentTable(_p1._0);
 		}
 	}();
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[incView]));
+	return incView;
 };
 var _chriswk$firetruck$Components_Incident_Views$incidentRow = function (incident) {
 	var finnEnv = _elm_lang$core$Basics$toString(incident.finnEnv);
@@ -9633,17 +9725,20 @@ var _chriswk$firetruck$Components_Incident_Views$incidentRow = function (inciden
 	var maybeId = _elm_lang$core$List$head(
 		_elm_lang$core$List$reverse(slashSep));
 	var id = function () {
-		var _p1 = maybeId;
-		if (_p1.ctor === 'Nothing') {
+		var _p2 = maybeId;
+		if (_p2.ctor === 'Nothing') {
 			return '';
 		} else {
-			return _elm_lang$core$Basics$toString(_p1._0);
+			return _elm_lang$core$Basics$toString(_p2._0);
 		}
 	}();
 	return A2(
 		_elm_lang$html$Html$tr,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Events$onClick(
+				_chriswk$firetruck$Components_Incident_Models$FetchIncident(incidentUrl))
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
@@ -9652,17 +9747,7 @@ var _chriswk$firetruck$Components_Incident_Views$incidentRow = function (inciden
 					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Events$onClick(
-								_chriswk$firetruck$Components_Incident_Models$FetchIncident(incidentUrl))
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text(id)
-							]))
+						_elm_lang$html$Html$text(id)
 					])),
 				A2(
 				_elm_lang$html$Html$td,
@@ -9695,29 +9780,11 @@ var _chriswk$firetruck$Components_Incident_Views$incidentRow = function (inciden
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(finnEnv)
-					])),
-				A2(
-				_elm_lang$html$Html$td,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Events$onClick(
-								_chriswk$firetruck$Components_Incident_Models$FetchIncident(incidentUrl))
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('View')
-							]))
 					]))
 			]));
 };
 var _chriswk$firetruck$Components_Incident_Views$incidentsTable = function (list) {
-	var incidentRows = A2(_elm_lang$core$List$map, _chriswk$firetruck$Components_Incident_Views$incidentRow, list.incidents);
+	var incidentRows = A2(_elm_lang$core$List$map, _chriswk$firetruck$Components_Incident_Views$incidentRow, list);
 	return A2(
 		_elm_lang$html$Html$table,
 		_elm_lang$core$Native_List.fromArray(
@@ -9775,13 +9842,7 @@ var _chriswk$firetruck$Components_Incident_Views$incidentsTable = function (list
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html$text('Finn env')
-									])),
-								A2(
-								_elm_lang$html$Html$th,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[]))
+									]))
 							]))
 					])),
 				A2(
@@ -9802,16 +9863,11 @@ var _chriswk$firetruck$Components_Incident_Views$listView = function (page) {
 			[pagination, overView, pagination]));
 };
 var _chriswk$firetruck$Components_Incident_Views$incidentsPageView = function (model) {
-	var _p2 = model.incidentsPage;
-	if (_p2.ctor === 'Nothing') {
-		return A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
+	var _p3 = model.incidentsPage;
+	if (_p3.ctor === 'Nothing') {
+		return _elm_lang$html$Html$text('');
 	} else {
-		return _chriswk$firetruck$Components_Incident_Views$listView(_p2._0);
+		return _chriswk$firetruck$Components_Incident_Views$listView(_p3._0);
 	}
 };
 var _chriswk$firetruck$Components_Incident_Views$pageWrapper = function (model) {
@@ -9841,6 +9897,7 @@ var _chriswk$firetruck$Components_Incident_Views$view = function (model) {
 			[
 				_chriswk$firetruck$Components_Incident_Views$menuBar(model),
 				_chriswk$firetruck$Components_Incident_Views$pageWrapper(model),
+				_chriswk$firetruck$Components_Incident_Views$errorPrinter(model),
 				_chriswk$firetruck$Components_Incident_Views$finnFooter(model)
 			]));
 };
@@ -9887,27 +9944,6 @@ var _chriswk$firetruck$Main$update = F2(
 		switch (_p0.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'IncidentsFetchSucceed':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							incidentsPage: _elm_lang$core$Maybe$Just(_p0._0),
-							currentIncident: _elm_lang$core$Maybe$Nothing
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'IncidentsFetchFail':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							lastError: _elm_lang$core$Maybe$Just(_p0._0)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
 			case 'IncidentFetchFail':
 				return {
 					ctor: '_Tuple2',
@@ -9935,21 +9971,62 @@ var _chriswk$firetruck$Main$update = F2(
 					_0: model,
 					_1: _chriswk$firetruck$Components_Incident_Tasks$fetchIncident(_p0._0)
 				};
-			case 'DisplayIncidentList':
-				return {ctor: '_Tuple2', _0: model, _1: _chriswk$firetruck$Components_Incident_Tasks$fetchMostRecentIncidents};
-			default:
+			case 'IncidentsFetchSucceed':
 				return {
 					ctor: '_Tuple2',
-					_0: model,
-					_1: _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents(
-						_elm_lang$core$Basics$toString(_p0._0))
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							incidentsPage: _elm_lang$core$Maybe$Just(_p0._0),
+							currentIncident: _elm_lang$core$Maybe$Nothing
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'IncidentsFetchFail':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							lastError: _elm_lang$core$Maybe$Just(_p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdatePageSize':
+				var updatedModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{pageSize: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: updatedModel,
+					_1: _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents(updatedModel)
+				};
+			case 'UpdatePage':
+				var updatedModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{currentPage: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: updatedModel,
+					_1: _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents(updatedModel)
+				};
+			default:
+				var updatedModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						sort: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+				return {
+					ctor: '_Tuple2',
+					_0: updatedModel,
+					_1: _chriswk$firetruck$Components_Incident_Tasks$fetchIncidents(updatedModel)
 				};
 		}
 	});
 var _chriswk$firetruck$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _chriswk$firetruck$Main$initialModel = {sort: _elm_lang$core$Maybe$Nothing, incidentsPage: _elm_lang$core$Maybe$Nothing, lastError: _elm_lang$core$Maybe$Nothing, currentIncident: _elm_lang$core$Maybe$Nothing, pageSize: 20};
+var _chriswk$firetruck$Main$initialModel = {incidentsPage: _elm_lang$core$Maybe$Nothing, lastError: _elm_lang$core$Maybe$Nothing, currentIncident: _elm_lang$core$Maybe$Nothing, pageSize: 20, sort: _elm_lang$core$Maybe$Nothing, currentPage: 0};
 var _chriswk$firetruck$Main$init = {ctor: '_Tuple2', _0: _chriswk$firetruck$Main$initialModel, _1: _chriswk$firetruck$Components_Incident_Tasks$fetchMostRecentIncidents};
 var _chriswk$firetruck$Main$main = {
 	main: _elm_lang$html$Html_App$program(

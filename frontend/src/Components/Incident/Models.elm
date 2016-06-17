@@ -5,20 +5,23 @@ import Http exposing (Error)
 
 
 type alias Model =
-    { sort : Maybe Sort
-    , incidentsPage : Maybe IncidentsPage
+    { incidentsPage : Maybe IncidentsPage
     , lastError : Maybe Http.Error
     , currentIncident : Maybe Incident
     , pageSize : Int
+    , sort : Maybe Sort
+    , currentPage : Int
     }
 
 
 type Msg
     = NoOp
     | DisplayIncidentList
-    | IncidentPage Int
     | IncidentsFetchFail Http.Error
     | IncidentsFetchSucceed IncidentsPage
+    | UpdatePage Int
+    | UpdateSort Sort
+    | UpdatePageSize Int
     | IncidentFetchFail Http.Error
     | IncidentFetchSucceed Incident
     | FetchIncident String
@@ -49,8 +52,10 @@ type alias IncidentLinks =
     }
 
 
-type alias Sort =
-    ( String, Direction )
+type alias Sort = {
+    column : String
+    , direction : Direction
+    }
 
 
 type alias Pagination =
@@ -62,10 +67,10 @@ type alias Pagination =
 
 
 type alias IncidentsPage =
-    { incidents : IncidentsList
+    { incidents : List Incident
     , links : Links
     , pagination : Pagination
-    }
+   }
 
 
 type alias Incident =
