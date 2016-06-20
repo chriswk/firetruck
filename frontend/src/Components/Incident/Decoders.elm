@@ -23,10 +23,10 @@ pageDecoder =
 linksDecoder : Decoder Links
 linksDecoder =
     succeed Links
-        |: ("first" := linkDecoder)
+        |: (maybe ("first" := linkDecoder))
         |: ("self" := linkDecoder)
         |: (maybe ("next" := linkDecoder))
-        |: ("last" := linkDecoder)
+        |: (maybe ("last" := linkDecoder))
         |: ("profile" := linkDecoder)
         |: ("search" := linkDecoder)
         |: (maybe ("prev" := linkDecoder))

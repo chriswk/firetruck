@@ -28,10 +28,10 @@ type Msg
 
 
 type alias Links =
-    { first : Link
+    { first : Maybe Link
     , self : Link
     , next : Maybe Link
-    , last : Link
+    , last : Maybe Link
     , profile : Link
     , search : Link
     , prev : Maybe Link
@@ -52,8 +52,8 @@ type alias IncidentLinks =
     }
 
 
-type alias Sort = {
-    column : String
+type alias Sort =
+    { column : String
     , direction : Direction
     }
 
@@ -70,7 +70,7 @@ type alias IncidentsPage =
     { incidents : List Incident
     , links : Links
     , pagination : Pagination
-   }
+    }
 
 
 type alias Incident =
