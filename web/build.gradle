@@ -132,18 +132,15 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            url = "http://mavenproxy.finntech.no/finntech-internal-snapshot"
+        }
+    }
 }
 
 def getDate() {
     new Date().format("yyyyMMddHHmmss")
-}
-
-publish {
-    dependsOn assemble
-}
-
-publishToMavenLocal {
-    dependsOn assemble
 }
 
 bootRepackage {
