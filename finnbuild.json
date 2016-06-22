@@ -13,7 +13,7 @@
   "tasks": {
     "deploy": [
       {
-        "command": "./gradlew clean build",
+        "command": "./gradlew build publish",
         "pipelines": [
           {
             "pattern": "Upload (http.*firetruck-web-\\d.+?shaded\\.jar)",
