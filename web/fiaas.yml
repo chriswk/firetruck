@@ -1,7 +1,9 @@
+---
+admin_access: read-write
+resources:
+  requests:
+    memory: 512m
 services:
-  - type: http
-    service_port: 8149
-    exposed_port: 8149
-    probe_delay: 20
+  - exposed_port: 8080
     readiness: /internal-backstage/health
     liveness: /internal-backstage/health

@@ -1,0 +1,20 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      PGSQL_FIRETRUCK_DATABASENAME: 'firetruck'
+      PGSQL_FIRETRUCK_USER: 'firetruck-admin'
+      PGSQL_FIRETRUCK_PORT: '5432'
+      PGSQL_FIRETRUCK_SERVER: '//db'
+      PGSQL_FIRETRUCK_PASSWORD: '4&3ps33F4v%*kXnPun8s'
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: 'firetruck'
+      POSTGRES_PASSWORD: '4&3ps33F4v%*kXnPun8s'
+      POSTGRES_USER: 'firetruck-admin'
