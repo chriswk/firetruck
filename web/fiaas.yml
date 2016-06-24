@@ -1,5 +1,4 @@
 ---
-admin_access: read-write
 resources:
   requests:
     memory: 512m
@@ -7,3 +6,4 @@ services:
   - exposed_port: 8080
     readiness: /internal-backstage/health
     liveness: /internal-backstage/health
+has_secrets: true
