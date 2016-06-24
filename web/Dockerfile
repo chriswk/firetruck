@@ -1,4 +1,4 @@
-FROM finntech/openjdk8bond:1.8.0_92
+FROM finntech/openjdk8:1.8.0_92
 
 WORKDIR /app
 
