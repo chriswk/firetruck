@@ -49,10 +49,16 @@ if ( TARGET_ENV === 'development' ) {
       'webpack-dev-server/client?http://localhost:8080',
       path.join( __dirname, 'src/index.js' )
     ],
-
     devServer: {
       inline:   true,
-      progress: true
+      progress: true,
+      proxy: [{
+          path: '/api/*',
+          target: "http://localhost:9090/api/",
+          rewrite: function(req) {
+            req.url = req.url.replace(/^\/api/, '');
+          }
+      }]
     },
 
     module: {

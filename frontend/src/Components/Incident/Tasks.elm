@@ -8,7 +8,7 @@ import Task exposing (Task)
 
 incidentBaseUrl : String
 incidentBaseUrl =
-    "http://localhost:9090/api/incidents"
+    "/api/incidents"
 
 
 

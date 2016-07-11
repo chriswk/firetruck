@@ -1,0 +1,31 @@
+plugins {
+  id "com.moowork.node" version "0.13"
+  id 'java'
+}
+
+node {
+  version = '6.3.0'
+  npmVersion = '3.10.3'
+  download = true
+}
+
+task webpack(type: NodeTask, dependsOn: 'npmInstall') {
+  def osName = System.getProperty("os.name").toLowerCase()
+  if (osName.contains("windows")) {
+    script = project.file('node_modules/webpack/bin/webpack.js')
+  } else {
+    script = project.file('node_modules/.bin/webpack')
+  }
+}
+
+task start(type: NpmTask) {
+  args = ['start']
+}
+
+jar {
+  from 'build/dist'
+  includeEmptyDirs = false
+}
+
+jar.dependsOn webpack
+start.dependsOn npmInstall

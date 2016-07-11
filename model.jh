@@ -1,0 +1,42 @@
+entity Incident {
+	incidentId Long,
+    checkName String,
+    client String,
+    dc String,
+    lastExection ZonedDateTime,
+    command String,
+    duration Double,
+    executed ZonedDateTime,
+    finnApp String,
+    finnEnv String,
+    output String,
+}
+
+entity IncidentTag {
+	tagId Long,
+    name String
+}
+entity Team {
+	teamId Long,
+    name String
+}
+
+entity Comment {
+	commentId Long,
+    posted ZonedDateTime,
+  	information String
+}
+
+relationship ManyToMany {
+	Incident{tags} to IncidentTag
+}
+relationship ManyToOne {
+	Incident{team} to Team
+}
+
+relationship OneToMany {
+	Incident{comments} to Comment
+}
+relationship ManyToOne {
+	Comment{incident} to Incident
+}
