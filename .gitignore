@@ -9,3 +9,4 @@ generated_src
 generated_testSrc
 elm-stuff
 node_modules
+npm-debug.log
