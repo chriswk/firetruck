@@ -1,69 +1,49 @@
 module Route exposing (..)
 
-import String exposing (split)
-import Navigation
 import Html exposing (..)
+import Navigation
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Images exposing (topbarImage)
+import Hop exposing (makeUrl, makeUrlFromLocation, matchUrl, setQuery, matcherToPath)
+import Hop.Types exposing (Config, Query, Location, PathMatcher, Router)
+import Hop.Matchers exposing (match1, match2, int)
+
+
+type Route
+    = HomeRoute
+    | IncidentsRoute
+    | IncidentRoute Int
+    | NotFoundRoute
+
+
+type Msg
+    = NavigateTo String
+    | SetQuery Query
 
 
 type alias Model =
-    Maybe Location
+    { location : Location
+    , route : Route
+    }
 
 
-type Location
-    = Home
-    | Incidents
+init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
+init ( route, location ) =
+    Model location route ! []
 
 
-init : Maybe Location -> Model
-init location =
-    location
-
-
-urlFor : Location -> String
-urlFor location =
-    let
-        url =
-            case location of
-                Home ->
-                    "/"
-
-                Incidents ->
-                    "/incidents"
-    in
-        "#" ++ url
-
-
-locFor : Navigation.Location -> Maybe Location
-locFor path =
-    let
-        segments =
-            path.hash
-                |> split "/"
-                |> List.filter (\seg -> seg /= "" && seg /= "#")
-    in
-        case segments of
-            [] ->
-                Just Home
-
-            [ "incidents" ] ->
-                Just Incidents
-
-            _ ->
-                Nothing
-
-
-navItem : Model -> Location -> String -> Html msg
+navItem : Model -> Route -> String -> Html Msg
 navItem model page caption =
     let
         active =
-            case model of
-                Nothing ->
-                    False
+            model.route == page
 
-                Just current ->
-                    current == page
+        url =
+            reverse page
+
+        linkAction =
+            NavigateTo url
     in
         li
             [ classList
@@ -73,7 +53,7 @@ navItem model page caption =
             ]
             [ a
                 [ class "nav-link"
-                , href (urlFor page)
+                , onClick linkAction
                 ]
                 [ text caption ]
             ]
@@ -84,7 +64,7 @@ notFound =
     div [] [ text "Could not find that page" ]
 
 
-navigationView : Model -> Html msg
+navigationView : Model -> Html Msg
 navigationView route =
     let
         link =
@@ -96,7 +76,7 @@ navigationView route =
                     [ div [ class "page" ]
                         [ div [ class "nav-level1 h4" ]
                             [ homeLink
-                            , link Incidents "Incidents"
+                            , link IncidentsRoute "Incidents"
                             ]
                         ]
                     ]
@@ -104,13 +84,92 @@ navigationView route =
             ]
 
 
-homeLink : Html msg
+homeLink : Html Msg
 homeLink =
     a
-        [ href (urlFor Home)
+        [ onClick (NavigateTo (reverse HomeRoute))
         ]
         [ span [ class "topbar-nav-svg-home" ]
             [ img [ topbarImage, alt "FINN", width 106, height 34 ] []
             ]
         , span [ class "topbar-nav-svg-caption caption showbydefault hide-lt900" ] [ text "FINN Firetruck" ]
         ]
+
+
+matcherHome : PathMatcher Route
+matcherHome =
+    match1 HomeRoute "/"
+
+
+matcherIncidents : PathMatcher Route
+matcherIncidents =
+    match1 IncidentsRoute "/incidents"
+
+
+matcherIncident : PathMatcher Route
+matcherIncident =
+    match2 IncidentRoute "/incidents/" int
+
+
+matchers : List (PathMatcher Route)
+matchers =
+    [ matcherHome
+    , matcherIncidents
+    , matcherIncident
+    ]
+
+
+routerConfig : Config Route
+routerConfig =
+    { hash = True
+    , basePath = ""
+    , matchers = matchers
+    , notFound = NotFoundRoute
+    }
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case (Debug.log "msg" msg) of
+        NavigateTo path ->
+            let
+                command =
+                    makeUrl routerConfig path
+                        |> Navigation.newUrl
+            in
+                ( model, Debug.log "command: " command )
+
+        SetQuery query ->
+            let
+                command =
+                    model.location
+                        |> setQuery query
+                        |> makeUrlFromLocation routerConfig
+                        |> Navigation.newUrl
+            in
+                ( model, command )
+
+
+reverse : Route -> String
+reverse route =
+    let
+        route' =
+            case route of
+                HomeRoute ->
+                    matcherToPath matcherHome []
+
+                IncidentRoute id ->
+                    matcherToPath matcherIncident [ toString id ]
+
+                IncidentsRoute ->
+                    matcherToPath matcherIncidents []
+
+                NotFoundRoute ->
+                    ""
+    in
+        route'
+
+
+urlParser : Navigation.Parser ( Route, Hop.Types.Location )
+urlParser =
+    Navigation.makeParser (.href >> matchUrl routerConfig)

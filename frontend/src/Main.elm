@@ -4,33 +4,44 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.App as App
 import Navigation exposing (program)
-import Route
-import Pages.Incidents as Incidents
+import Route exposing (..)
+import Hop.Types exposing (Location)
+import Components.Incident.List as Incidents
+import Components.Incident.View as Incident
 
 
 type alias Model =
     { route : Route.Model
     , incidents : Incidents.Model
+    , incident : Incident.Model
     }
 
 
 type Msg
-    = IncidentsMsg Incidents.Msg
+    = RouteMsg Route.Msg
+    | IncidentsMsg Incidents.Msg
+    | IncidentMsg Incident.Msg
 
 
-init : Maybe Route.Location -> ( Model, Cmd Msg )
-init location =
+init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
+init router =
     let
-        route =
-            Route.init location
+        ( routeModel, routeMsg ) =
+            Route.init router
 
-        ( inc, incMsg ) =
+        ( incidents, incidentsMsg ) =
             Incidents.init
+
+        ( incident, incidentMsg ) =
+            Incident.init
     in
-        { route = route
-        , incidents = inc
+        { route = routeModel
+        , incidents = incidents
+        , incident = incident
         }
-            ! [ Cmd.map IncidentsMsg incMsg
+            ! [ Cmd.map RouteMsg routeMsg
+              , Cmd.map IncidentsMsg incidentsMsg
+              , Cmd.map IncidentMsg incidentMsg
               ]
 
 
@@ -38,18 +49,21 @@ view : Model -> Html Msg
 view model =
     let
         activePage =
-            case model.route of
-                Just (Route.Home) ->
+            case model.route.route of
+                Route.HomeRoute ->
                     div [] []
 
-                Just (Route.Incidents) ->
+                Route.IncidentsRoute ->
                     App.map IncidentsMsg <| Incidents.view model.incidents
 
-                Nothing ->
+                Route.IncidentRoute id ->
+                    App.map IncidentMsg <| Incident.view model.incident id
+
+                Route.NotFoundRoute ->
                     Route.notFound
 
         navigation =
-            Route.navigationView model.route
+            App.map RouteMsg <| Route.navigationView model.route
     in
         div []
             [ navigation
@@ -68,23 +82,47 @@ update action model =
             in
                 { model | incidents = incidents } ! [ Cmd.map IncidentsMsg cmd ]
 
+        IncidentMsg msg ->
+            let
+                ( incident, cmd ) =
+                    Incident.update msg model.incident
+            in
+                { model | incident = incident } ! [ Cmd.map IncidentMsg cmd ]
+
+        RouteMsg msg ->
+            let
+                ( route, cmd ) =
+                    Route.update msg model.route
+            in
+                { model | route = route } ! [ Cmd.map RouteMsg cmd ]
+
 
 subscriptions : model -> Sub Msg
 subscriptions model =
     Sub.none
 
 
-updateRoute : Maybe Route.Location -> Model -> ( Model, Cmd Msg )
-updateRoute route model =
-    { model | route = route } ! []
+urlUpdate : ( Route, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
+    let
+        route' =
+            Debug.log "route" route
+
+        location' =
+            Debug.log "location" location
+
+        newModel =
+            { model | route = { route = route', location = location' } }
+    in
+        newModel ! []
 
 
 main : Program Never
 main =
-    program (Navigation.makeParser Route.locFor)
+    program (Route.urlParser)
         { init = init
         , subscriptions = subscriptions
         , update = update
-        , urlUpdate = updateRoute
+        , urlUpdate = urlUpdate
         , view = view
         }
