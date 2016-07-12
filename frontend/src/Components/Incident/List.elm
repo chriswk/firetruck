@@ -1,12 +1,11 @@
 module Components.Incident.List exposing (..)
 
-import Http exposing (Error)
 import Html exposing (..)
-import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Task exposing (Task)
-import Components.Incident.Models exposing (Incident, IncidentLinks, IncidentCollection, Sort, Column, Direction(..))
+import Components.Incident.Models exposing (..)
 import Components.Incident.Tasks exposing (fetchIncidents)
+import Components.Incident.Pagination exposing (..)
 import Styles exposing (tableStyle)
 
 
@@ -14,35 +13,28 @@ type alias IncidentId =
     Int
 
 
-type Msg
-    = NoOp
-    | IncidentsFetchFail Http.Error
-    | IncidentsFetchSucceed IncidentCollection
-    | FetchIncidents
-    | SortTable Sort
-
-
 type alias Model =
     { incidents : List Incident
     , currentSort : Sort
+    , pagination : Pagination
     }
 
 
-init : ( Model, Cmd Msg )
+init : ( Model, Cmd IncidentListMsg )
 init =
     let
         currentSort =
             Sort "id" Desc
+
+        pagination =
+            Pagination 0 20 -1 -1
     in
-        { incidents = [], currentSort = currentSort } ! [ (getIncidents currentSort) ]
+        { incidents = [], currentSort = currentSort, pagination = pagination } ! [ (getIncidents pagination currentSort) ]
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : IncidentListMsg -> Model -> ( Model, Cmd IncidentListMsg )
 update action model =
     case action of
-        NoOp ->
-            model ! []
-
         IncidentsFetchFail a ->
             model ! []
 
@@ -50,17 +42,33 @@ update action model =
             let
                 incidentList =
                     incidentCollection.incidents
+
+                pagination =
+                    incidentCollection.pagination
             in
-                { model | incidents = incidentList } ! []
+                { model | incidents = incidentList, pagination = pagination } ! []
 
         SortTable sort ->
-            { model | currentSort = sort } ! [ getIncidents sort ]
+            { model | currentSort = sort } ! [ getIncidents model.pagination sort ]
 
         FetchIncidents ->
-            model ! [ getIncidents model.currentSort ]
+            model ! [ getIncidents model.pagination model.currentSort ]
+
+        SwitchPage page ->
+            let
+                oldPagination =
+                    model.pagination
+
+                newPagination =
+                    { oldPagination | currentPage = page }
+
+                updateIncidentList =
+                    getIncidents newPagination model.currentSort
+            in
+                { model | pagination = newPagination } ! [ updateIncidentList ]
 
 
-view : Model -> Html Msg
+view : Model -> Html IncidentListMsg
 view model =
     let
         incidents =
@@ -68,17 +76,27 @@ view model =
 
         sortMsg =
             \colName -> SortTable (decideSort model.currentSort colName)
-    in
-        table [ tableStyle ]
-            [ thead []
-                [ tr []
-                    [ th [ onClick (sortMsg "id") ] [ text "Id" ]
-                    , th [ onClick (sortMsg "checkName") ] [ text "Checkname" ]
-                    , th [ onClick (sortMsg "finnApp") ] [ text "Finn app" ]
-                    , th [ onClick (sortMsg "finnEnv") ] [ text "Finn env" ]
+
+        pagination =
+            paginate model.pagination
+
+        incidentList =
+            table [ tableStyle ]
+                [ thead []
+                    [ tr []
+                        [ th [ onClick (sortMsg "id") ] [ text "Id" ]
+                        , th [ onClick (sortMsg "checkName") ] [ text "Checkname" ]
+                        , th [ onClick (sortMsg "finnApp") ] [ text "Finn app" ]
+                        , th [ onClick (sortMsg "finnEnv") ] [ text "Finn env" ]
+                        ]
                     ]
+                , tbody [] incidents
                 ]
-            , tbody [] incidents
+    in
+        div []
+            [ pagination
+            , incidentList
+            , pagination
             ]
 
 
@@ -86,7 +104,7 @@ decideSort : Sort -> Column -> Sort
 decideSort sort column =
     let
         isCurrent =
-            Debug.log "switching to" column == Debug.log "from column" sort.column
+            column == sort.column
 
         direction' =
             if isCurrent then
@@ -102,7 +120,7 @@ decideSort sort column =
         Sort column direction'
 
 
-incidentRow : Incident -> Html Msg
+incidentRow : Incident -> Html IncidentListMsg
 incidentRow incident =
     let
         id =
@@ -130,6 +148,6 @@ type alias IncidentList =
     }
 
 
-getIncidents : Sort -> Cmd Msg
-getIncidents sort =
-    Task.perform IncidentsFetchFail IncidentsFetchSucceed (fetchIncidents sort)
+getIncidents : Pagination -> Sort -> Cmd IncidentListMsg
+getIncidents pagination sort =
+    Task.perform IncidentsFetchFail IncidentsFetchSucceed (fetchIncidents pagination sort)

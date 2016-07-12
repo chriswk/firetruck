@@ -2,7 +2,7 @@ module Components.Incident.Tasks exposing (..)
 
 import Task exposing (Task)
 import Http exposing (Error, url)
-import Components.Incident.Models exposing (Incident, IncidentCollection, Sort, Direction(..))
+import Components.Incident.Models exposing (Incident, IncidentCollection, Sort, Direction(..), Pagination)
 import Components.Incident.Decoders exposing (incidentCollectionDecoder, incidentDecoder)
 
 
@@ -25,17 +25,23 @@ sortParam sort =
         sort.column ++ "," ++ dir
 
 
-fetchIncidents : Sort -> Task Error IncidentCollection
-fetchIncidents sort =
+fetchIncidents : Pagination -> Sort -> Task Error IncidentCollection
+fetchIncidents pagination sort =
     let
         sortString =
             ( "sort", (sortParam sort) )
 
+        pageNo =
+            ( "page", toString (pagination.currentPage) )
+
+        size =
+            ( "size", (toString pagination.pageSize) )
+
         params =
-            [ sortString ]
+            [ sortString, pageNo, size ]
 
         incidentUrl =
-            url incidentBaseUrl params
+            Debug.log "incidenturl: " (url incidentBaseUrl params)
     in
         Http.get incidentCollectionDecoder incidentUrl
 

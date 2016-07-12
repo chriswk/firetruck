@@ -7,6 +7,7 @@ import Navigation exposing (program)
 import Route exposing (..)
 import Hop.Types exposing (Location)
 import Components.Incident.List as Incidents
+import Components.Incident.Models as IncidentModel
 import Components.Incident.View as Incident
 
 
@@ -19,7 +20,7 @@ type alias Model =
 
 type Msg
     = RouteMsg Route.Msg
-    | IncidentsMsg Incidents.Msg
+    | IncidentsMsg IncidentModel.IncidentListMsg
     | IncidentMsg Incident.Msg
 
 

@@ -2,10 +2,19 @@ module Components.Incident.Models exposing (..)
 
 import Links exposing (Link, Links)
 import Date exposing (Date)
+import Http exposing (Error)
 
 
 type alias IncidentId =
     Int
+
+
+type IncidentListMsg
+    = IncidentsFetchFail Http.Error
+    | IncidentsFetchSucceed IncidentCollection
+    | FetchIncidents
+    | SortTable Sort
+    | SwitchPage Page
 
 
 type alias Incident =
@@ -22,6 +31,18 @@ type alias Incident =
     }
 
 
+type alias Page =
+    Int
+
+
+type alias Pagination =
+    { pageSize : Int
+    , totalElements : Int
+    , totalPages : Int
+    , currentPage : Page
+    }
+
+
 type alias IncidentLinks =
     { self : Link
     , incident : Link
@@ -34,6 +55,7 @@ type alias IncidentLinks =
 type alias IncidentCollection =
     { incidents : List Incident
     , links : Links
+    , pagination : Pagination
     }
 
 

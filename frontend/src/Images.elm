@@ -1,4 +1,4 @@
-module Images exposing (topbarImage)
+module Images exposing (..)
 
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
