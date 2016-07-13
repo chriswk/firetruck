@@ -52,7 +52,7 @@ fetchIncident id =
         idStr =
             toString id
 
-        incidentUrl =
+        url =
             incidentBaseUrl ++ "/" ++ idStr
     in
-        Http.get incidentDecoder incidentUrl
+        Http.get incidentDecoder url

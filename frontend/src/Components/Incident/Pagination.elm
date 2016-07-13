@@ -5,16 +5,16 @@ import Images exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Components.Incident.Models exposing (..)
+import Components.Incident.Models exposing (Page, Pagination, Msg, Msg(..))
 
 
-startLink : Html IncidentListMsg
+startLink : Html Msg
 startLink =
     a [ rel "start", class "mrn pam", ariaLabel "First", onClick (SwitchPage 0) ]
         [ firstPageIcon ]
 
 
-prevAnchor : Page -> Html IncidentListMsg
+prevAnchor : Page -> Html Msg
 prevAnchor currentPage =
     let
         prevPage =
@@ -27,7 +27,7 @@ prevAnchor currentPage =
             [ prevPageIcon ]
 
 
-prevLink : Page -> Maybe (Html IncidentListMsg)
+prevLink : Page -> Maybe (Html Msg)
 prevLink page =
     if (page == 0) then
         Nothing
@@ -35,7 +35,7 @@ prevLink page =
         Just (prevAnchor page)
 
 
-nextAnchor : Page -> Html IncidentListMsg
+nextAnchor : Page -> Html Msg
 nextAnchor currentPage =
     let
         nextPage =
@@ -48,7 +48,7 @@ nextAnchor currentPage =
             [ nextPageIcon ]
 
 
-nextLink : Pagination -> Maybe (Html IncidentListMsg)
+nextLink : Pagination -> Maybe (Html Msg)
 nextLink pagination =
     let
         currentPage =
@@ -63,7 +63,7 @@ nextLink pagination =
             Nothing
 
 
-lastLink : Pagination -> Html IncidentListMsg
+lastLink : Pagination -> Html Msg
 lastLink pagination =
     let
         lastPage =
@@ -76,7 +76,7 @@ lastLink pagination =
             [ lastPageIcon ]
 
 
-pageLink : Pagination -> Page -> Html IncidentListMsg
+pageLink : Pagination -> Page -> Html Msg
 pageLink pagination page =
     let
         pageText =
@@ -91,11 +91,11 @@ pageLink pagination page =
             a [ class "mrn pam", onClick cmd ] [ text pageText ]
 
 
-pageLinks : Pagination -> List (Html IncidentListMsg)
+pageLinks : Pagination -> List (Html Msg)
 pageLinks pagination =
     let
         lastPage =
-            pagination.totalPages
+            pagination.totalPages - 1
 
         curPage =
             pagination.currentPage
@@ -115,7 +115,7 @@ pageLinks pagination =
         List.map linkFn range
 
 
-paginate : Pagination -> Html IncidentListMsg
+paginate : Pagination -> Html Msg
 paginate pagination =
     let
         prevL =
@@ -147,7 +147,7 @@ paginate pagination =
             pageLinks pagination
 
         allLinks =
-            List.concat [ [ startLink, previous ], remainingPages, [ last ] ]
+            List.concat [ [ startLink, previous ], remainingPages, [ next, last ] ]
     in
         div [ class "t4 centerify r-margin" ]
             allLinks

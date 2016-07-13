@@ -1,9 +1,8 @@
-module Components.Incident.View exposing (..)
+module Components.Incident.Detail exposing (..)
 
 import Components.Incident.Models exposing (Incident, IncidentId)
 import Components.Incident.Tasks exposing (fetchIncident)
 import Html exposing (..)
-import Html.Attributes exposing (..)
 import Http exposing (Error)
 import Styles exposing (tableStyle)
 import Task exposing (perform)
@@ -12,7 +11,7 @@ import Task exposing (perform)
 type Msg
     = IncidentFetchFail Http.Error
     | IncidentFetchSucceed Incident
-    | FetchIncident IncidentId
+    | FetchIncident Int
 
 
 type alias Model =
@@ -20,18 +19,14 @@ type alias Model =
     }
 
 
-view : Model -> IncidentId -> Html Msg
-view model id =
-    let
-        incidentView =
-            case model.incident of
-                Nothing ->
-                    text ""
+view : Model -> Html Msg
+view model =
+    case model.incident of
+        Nothing ->
+            text ""
 
-                Just incident ->
-                    incidentTable incident
-    in
-        incidentView
+        Just incident ->
+            incidentTable incident
 
 
 incidentTable : Incident -> Html Msg

@@ -7,6 +7,8 @@ import Components.Incident.Models exposing (..)
 import Components.Incident.Tasks exposing (fetchIncidents)
 import Components.Incident.Pagination exposing (..)
 import Styles exposing (tableStyle)
+import String exposing (split, toInt)
+import Route
 
 
 type alias IncidentId =
@@ -20,7 +22,7 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd IncidentListMsg )
+init : ( Model, Cmd Msg )
 init =
     let
         currentSort =
@@ -32,7 +34,12 @@ init =
         { incidents = [], currentSort = currentSort, pagination = pagination } ! [ (getIncidents pagination currentSort) ]
 
 
-update : IncidentListMsg -> Model -> ( Model, Cmd IncidentListMsg )
+mountCmd : Model -> Cmd Msg
+mountCmd model =
+    getIncidents model.pagination model.currentSort
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
         IncidentsFetchFail a ->
@@ -68,29 +75,92 @@ update action model =
                 { model | pagination = newPagination } ! [ updateIncidentList ]
 
 
-view : Model -> Html IncidentListMsg
+tableHeader : Model -> Html Msg
+tableHeader model =
+    let
+        sortMsg =
+            \colName -> SortTable (decideSort model.currentSort colName)
+    in
+        thead []
+            [ tr []
+                [ th [ onClick (sortMsg "id") ] [ text "Id" ]
+                , th [ onClick (sortMsg "checkName") ] [ text "Checkname" ]
+                , th [ onClick (sortMsg "finnApp") ] [ text "Finn app" ]
+                , th [ onClick (sortMsg "finnEnv") ] [ text "Finn env" ]
+                , th [] [ text "Comments" ]
+                ]
+            ]
+
+
+findId : String -> Int
+findId id =
+    let
+        parts =
+            String.split "/" id
+
+        lastPart =
+            List.head (List.reverse parts)
+
+        idInt =
+            String.toInt <|
+                case lastPart of
+                    Nothing ->
+                        "-1"
+
+                    Just idStr ->
+                        idStr
+    in
+        Result.withDefault -1 idInt
+
+
+incidentRow : Incident -> Html Msg
+incidentRow incident =
+    let
+        id =
+            incident.links.self.href
+
+        idInt =
+            findId id
+
+        checkName =
+            incident.checkName
+
+        finnApp =
+            incident.finnApp
+
+        finnEnv =
+            incident.finnEnv
+
+        link =
+            Route.linkTo (Route.IncidentRoute idInt)
+    in
+        tr []
+            [ td []
+                [ link []
+                    [ text id ]
+                ]
+            , td [] [ text checkName ]
+            , td [] [ text finnApp ]
+            , td [] [ text finnEnv ]
+            ]
+
+
+view : Model -> Html Msg
 view model =
     let
         incidents =
             List.map incidentRow model.incidents
 
-        sortMsg =
-            \colName -> SortTable (decideSort model.currentSort colName)
-
         pagination =
             paginate model.pagination
 
+        tableBody =
+            tbody [] incidents
+
         incidentList =
             table [ tableStyle ]
-                [ thead []
-                    [ tr []
-                        [ th [ onClick (sortMsg "id") ] [ text "Id" ]
-                        , th [ onClick (sortMsg "checkName") ] [ text "Checkname" ]
-                        , th [ onClick (sortMsg "finnApp") ] [ text "Finn app" ]
-                        , th [ onClick (sortMsg "finnEnv") ] [ text "Finn env" ]
-                        ]
-                    ]
-                , tbody [] incidents
+                [ (tableHeader model)
+                , tableBody
                 ]
     in
         div []
@@ -120,34 +190,11 @@ decideSort sort column =
         Sort column direction'
 
 
-incidentRow : Incident -> Html IncidentListMsg
-incidentRow incident =
-    let
-        id =
-            incident.links.self.href
-
-        checkName =
-            incident.checkName
-
-        finnApp =
-            incident.finnApp
-
-        finnEnv =
-            incident.finnEnv
-    in
-        tr []
-            [ td [] [ text id ]
-            , td [] [ text checkName ]
-            , td [] [ text finnApp ]
-            , td [] [ text finnEnv ]
-            ]
-
-
 type alias IncidentList =
     { incidents : List Incident
     }
 
 
-getIncidents : Pagination -> Sort -> Cmd IncidentListMsg
+getIncidents : Pagination -> Sort -> Cmd Msg
 getIncidents pagination sort =
     Task.perform IncidentsFetchFail IncidentsFetchSucceed (fetchIncidents pagination sort)

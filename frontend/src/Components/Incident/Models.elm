@@ -9,7 +9,7 @@ type alias IncidentId =
     Int
 
 
-type IncidentListMsg
+type Msg
     = IncidentsFetchFail Http.Error
     | IncidentsFetchSucceed IncidentCollection
     | FetchIncidents

@@ -3,11 +3,12 @@ module Route exposing (..)
 import Html exposing (..)
 import Navigation
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
-import Images exposing (topbarImage)
-import Hop exposing (makeUrl, makeUrlFromLocation, matchUrl, setQuery, matcherToPath)
+import Html.Events exposing (onClick, onWithOptions)
+import Hop exposing (makeUrl, makeUrlFromLocation, matchUrl, setQuery, addQuery, clearQuery, matcherToPath)
 import Hop.Types exposing (Config, Query, Location, PathMatcher, Router)
 import Hop.Matchers exposing (match1, match2, int)
+import Json.Decode as Json
+import Json.Decode.Extra exposing (lazy)
 
 
 type Route
@@ -17,83 +18,9 @@ type Route
     | NotFoundRoute
 
 
-type Msg
-    = NavigateTo String
-    | SetQuery Query
-
-
-type alias Model =
-    { location : Location
-    , route : Route
-    }
-
-
-init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
-init ( route, location ) =
-    Model location route ! []
-
-
-navItem : Model -> Route -> String -> Html Msg
-navItem model page caption =
-    let
-        active =
-            model.route == page
-
-        url =
-            reverse page
-
-        linkAction =
-            NavigateTo url
-    in
-        li
-            [ classList
-                [ ( "nav-item", True )
-                , ( "active", active )
-                ]
-            ]
-            [ a
-                [ class "nav-link"
-                , onClick linkAction
-                ]
-                [ text caption ]
-            ]
-
-
 notFound : Html msg
 notFound =
     div [] [ text "Could not find that page" ]
-
-
-navigationView : Model -> Html Msg
-navigationView route =
-    let
-        link =
-            \page caption -> navItem route page caption
-    in
-        div [ class "page" ]
-            [ div [ class "topbar fixed nav-down" ]
-                [ div [ class "container" ]
-                    [ div [ class "page" ]
-                        [ div [ class "nav-level1 h4" ]
-                            [ homeLink
-                            , link IncidentsRoute "Incidents"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-
-
-homeLink : Html Msg
-homeLink =
-    a
-        [ onClick (NavigateTo (reverse HomeRoute))
-        ]
-        [ span [ class "topbar-nav-svg-home" ]
-            [ img [ topbarImage, alt "FINN", width 106, height 34 ] []
-            ]
-        , span [ class "topbar-nav-svg-caption caption showbydefault hide-lt900" ] [ text "FINN Firetruck" ]
-        ]
 
 
 matcherHome : PathMatcher Route
@@ -128,28 +55,6 @@ routerConfig =
     }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case (Debug.log "msg" msg) of
-        NavigateTo path ->
-            let
-                command =
-                    makeUrl routerConfig path
-                        |> Navigation.newUrl
-            in
-                ( model, Debug.log "command: " command )
-
-        SetQuery query ->
-            let
-                command =
-                    model.location
-                        |> setQuery query
-                        |> makeUrlFromLocation routerConfig
-                        |> Navigation.newUrl
-            in
-                ( model, command )
-
-
 reverse : Route -> String
 reverse route =
     let
@@ -158,11 +63,11 @@ reverse route =
                 HomeRoute ->
                     matcherToPath matcherHome []
 
-                IncidentRoute id ->
-                    matcherToPath matcherIncident [ toString id ]
-
                 IncidentsRoute ->
                     matcherToPath matcherIncidents []
+
+                IncidentRoute id ->
+                    matcherToPath matcherIncident [ (toString id) ]
 
                 NotFoundRoute ->
                     ""
@@ -170,6 +75,40 @@ reverse route =
         route'
 
 
+catchNavigationClicks : (String -> msg) -> Attribute msg
+catchNavigationClicks tagger =
+    onWithOptions "click"
+        { stopPropagation = True
+        , preventDefault = True
+        }
+        (Json.map tagger (Json.at [ "target" ] pathDecoder))
+
+
+pathDecoder : Json.Decoder String
+pathDecoder =
+    Json.oneOf
+        [ Json.at [ "data-navigate" ] Json.string
+        , Json.at [ "parentElement" ] (lazy (\_ -> pathDecoder))
+        , Json.fail "no path found for click"
+        ]
+
+
 urlParser : Navigation.Parser ( Route, Hop.Types.Location )
 urlParser =
     Navigation.makeParser (.href >> matchUrl routerConfig)
+
+
+linkTo : Route -> List (Attribute msg) -> List (Html msg) -> Html msg
+linkTo route attrs content =
+    Debug.log "Link built: " (a ((linkAttrs route) ++ attrs) content)
+
+
+linkAttrs : Route -> List (Attribute msg)
+linkAttrs route =
+    let
+        path =
+            "#" ++ (reverse route)
+    in
+        [ href path
+        , attribute "data-navigate" path
+        ]
